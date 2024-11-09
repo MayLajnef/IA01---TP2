@@ -116,18 +116,19 @@
         (format t "~%Chasseur: \"Cette fois-ci, tu ne feras plus de mal à personne, vilaine bête !\"")
         (format t "~%*BANG !*")
         ;; Applique risen et moved sur les personnes mangées si "person" = loup
-        (when (equal (get-value 'granny 'place state) 'wolf-belly)
-          (apply-effect 'risen 'granny 't state)
-          (apply-effect 'moved 'granny cc state)
-          (format t "~%*Le chasseur ouvre le ventre du loup et en sort la grand-mère*")
-          (format t "~%Chasseur: \"Dieu soit loué, elle respire encore !\"")
-          (format t "~%Grand-mère: \"Oh... Que s'est-il passé ?\""))
         (when (equal (get-value 'red-riding-hood 'place state) 'wolf-belly)
           (apply-effect 'risen 'red-riding-hood 't state)
           (apply-effect 'moved 'red-riding-hood cc state)
-          (format t "~%*Le chasseur sort aussitôt le Petit Chaperon Rouge du ventre du loup.*")
+          (format t "~%*Le chasseur ouvre le ventre du loup et en sort le Petit Chaperon Rouge*")
           (format t "~%Petit Chaperon Rouge: \"Comme il faisait noir là-dedans !\"")
-          (format t "~%Chasseur: \"Tout est fini maintenant, vous êtes en sécurité.\""))
+          (format t "~%Chasseur: \"N'ayez pas peur, vous êtes en sécurité.\""))
+        (when (equal (get-value 'granny 'place state) 'wolf-belly)
+          (apply-effect 'risen 'granny 't state)
+          (apply-effect 'moved 'granny cc state)
+          (format t "~%*Le chasseur sort aussi la grand-mère*")
+          (format t "~%Chasseur: \"Dieu soit loué, elle respire encore !\"")
+          (format t "~%Grand-mère: \"Oh... Que s'est-il passé ?\"")
+          (format t "~%Chasseur: \"Ne craignez rien, tout est fini maintenant, la vilaine bête n'est plus de ce monde.\""))
     ))
     
     ('eat 
@@ -229,8 +230,9 @@
          (format t "~%Petit Chaperon Rouge: \"Je promets de ne plus jamais parler aux inconnus dans les bois !\""))
 
         ;; Quand le loup fait la sieste (s6)
-        ((and (equal actor 'wolf) (equal cc 'wood))
-         (format t "~%*Le loup, le ventre bien rempli, s'allonge au pied d'un arbre*.")
+        ((and (equal actor 'wolf))
+         (when (equal cc 'wood) (format t "~%*Le loup, le ventre bien rempli, s'allonge au pied d'un arbre*"))
+         (when (equal cc 'granny-home) (format t "~%*Le loup, le ventre bien rempli, s'allonge sur le lit*"))
          (format t "~%Loup: \"Aaaah... Une petite sieste me fera du bien... *RONFLE*\""))
 
         ;; Dialogue par défaut

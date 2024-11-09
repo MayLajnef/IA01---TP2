@@ -112,6 +112,7 @@
       ;; Applique l'effet killed sur "person" 
       (apply-effect 'killed person 'nil state)
       (when (equal person 'wolf)
+        (format t )
         (format t "~%*Le chasseur charge son fusil*")
         (format t "~%Chasseur: \"Cette fois-ci, tu ne feras plus de mal à personne, vilaine bête !\"")
         (format t "~%*BANG !*")
@@ -217,10 +218,19 @@
          (format t "~%Petit Chaperon Rouge: \"Grand-mère, que vous avez de grandes dents !\"")
          (format t "~%Loup: \"C'EST POUR MIEUX TE MANGER !\""))
         
-        ;; Quand le chasseur arrive (s6 -> s7)
-        ((and (equal actor 'hunter) (equal cc 'granny-home))
+        ;; Quand le chasseur tombe sur le loup en train de faire sa sieste dans les bois (s6 -> s7) ou dans la maison de mère-grand
+        ((and (equal actor 'hunter) (equal person 'wolf))
          (format t "~%*Le chasseur entend des ronflements suspects*")
-         (format t "~%Chasseur: \"Tiens, tiens... La mère-grand ne ronfle pas comme ça d'habitude.\""))
+         (when (equal cc 'wood) 
+          (progn
+          (format t "~%Chasseur: \"Tiens, tiens... La chasse s'annonce fructueuse aujourd'hui...\"")
+          (format t "~%*Il s'avance prudemment, et soudain il aperçut un loup couché au pied d'un arbre.*")))
+         (when (equal cc 'granny-home) 
+          (progn
+          (format t "~%Chasseur: \"Tiens, tiens... La mère-grand ne ronfle pas comme ça d'habitude.\"")
+          (format t "~%*Il entre dans la maison et franchit la porte de la chambre. Quand il arrive devant le lit, il voit que c'est un loup qui y est couché.*")))
+         (format t "~%Chasseur: \"Ah ! C’est toi, vilaine bête ! Voilà bien longtemps que je te cherche...\"")
+         )
         
         ;; Le dénouement heureux (s8 -> outcome)
         ((and (equal actor 'red-riding-hood) (equal person 'granny))
@@ -230,7 +240,7 @@
          (format t "~%Petit Chaperon Rouge: \"Je promets de ne plus jamais parler aux inconnus dans les bois !\""))
 
         ;; Quand le loup fait la sieste (s6)
-        ((and (equal actor 'wolf))
+        ((equal actor 'wolf)
          (when (equal cc 'wood) (format t "~%*Le loup, le ventre bien rempli, s'allonge au pied d'un arbre*"))
          (when (equal cc 'granny-home) (format t "~%*Le loup, le ventre bien rempli, s'allonge sur le lit*"))
          (format t "~%Loup: \"Aaaah... Une petite sieste me fera du bien... *RONFLE*\""))

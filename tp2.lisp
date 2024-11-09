@@ -218,7 +218,7 @@
          (format t "~%Petit Chaperon Rouge: \"Grand-mère, que vous avez de grandes dents !\"")
          (format t "~%Loup: \"C'EST POUR MIEUX TE MANGER !\""))
         
-        ;; Quand le chasseur tombe sur le loup en train de faire sa sieste dans les bois (s6 -> s7) ou dans la maison de mère-grand
+        ;; Quand le chasseur tombe sur le loup en train de faire sa sieste dans les bois (s6 -> s7) ou dans la maison de mère-grand (s3 -> s7 ou s3 -> s4 -> s7 )
         ((and (equal actor 'hunter) (equal person 'wolf))
          (format t "~%*Le chasseur entend des ronflements suspects*")
          (when (equal cc 'wood) 
@@ -230,8 +230,7 @@
           (format t "~%Chasseur: \"Tiens, tiens... La mère-grand ne ronfle pas comme ça d'habitude.\"")
           (format t "~%*Il entre dans la maison et franchit la porte de la chambre. Quand il arrive devant le lit, il voit que c'est un loup qui y est couché.*")))
          (format t "~%Chasseur: \"Ah ! C’est toi, vilaine bête ! Voilà bien longtemps que je te cherche...\"")
-         )
-        
+        )
         ;; Le dénouement heureux (s8 -> outcome)
         ((and (equal actor 'red-riding-hood) (equal person 'granny))
          (format t "~%Petit Chaperon Rouge: \"Oh grand-mère, j'ai eu si peur !\"")

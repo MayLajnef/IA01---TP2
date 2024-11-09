@@ -58,39 +58,48 @@
 ;; 1
 ;; La fonction apply-effect modifie l'état du monde pour les effets suivants eaten, killed, moved et risen.
 (defun apply-effect (effect person value state)
-   ;; Fonction qui applique un seul changement de valeur dans l'état du monde après une action
+  ;; Fonction qui applique un changement de valeur dans l'état du monde
   (format t "~%APPLY EFFECT : ~s ~s ~s" effect person value)
   (cond
-  ((or (equal effect 'eaten) (equal effect 'killed) (equal effect 'risen)) (set-value person 'alive value state))
-  ((equal effect 'eaten) (set-value person 'place 'wolf-belly state))
-  ((equal effect 'moved) (set-value person 'place value state))
-  (t (print "Effet donné invalide ! L'effet doit appartenir à l'ensenmble {eaten, killed, moved, risen}."))
-  )
+   ((equal effect 'eaten)
+    (set-value person 'alive value state)
+    (set-value person 'place 'wolf-belly state))
+   ((equal effect 'killed)
+    (set-value person 'alive value state))
+   ((equal effect 'risen)
+    (set-value person 'alive value state))
+   ((equal effect 'moved)
+    (set-value person 'place value state))
+   (t (print "Effet invalide ! L'effet doit être parmi {eaten, killed, moved, risen}."))
+   )
 )
+
+(apply-effect 'eaten 'granny 'nil *state*)
+*state*
 #| TESTS
 ;; s2 - s3
 ? (apply-effect 'moved 'wolf 'granny-home *state*)
-? *states
+? *state*
 ((RED-RIDING-HOOD (ALIVE T) (PLACE WOOD)) (WOLF (ALIVE T) (PLACE GRANNY-HOM
 (GRANNY (ALIVE T) (PLACE GRANNY-HOME)) (HUNTER (ALIVE T) (PLACE HUNTER-HOME))
 ;; s2 - s3
 ? (apply-effect 'eaten 'granny 'nil *state*)
-? *states
+? *state*
 ((RED-RIDING-HOOD (ALIVE T) (PLACE WOOD)) (WOLF (ALIVE T) (PLACE GRANNY-HOM
 (GRANNY (ALIVE NIL) (PLACE WOLF-BELLY)) (HUNTER (ALIVE T) (PLACE HUNTER-HOM
 ;; s3 - s7
 ? (apply-effect 'moved 'hunter 'granny-home *state*)
-? *states
+? *state*
 ((RED-RIDING-HOOD (ALIVE T) (PLACE WOOD)) (WOLF (ALIVE T) (PLACE GRANNY-HOM
 (GRANNY (ALIVE NIL) (PLACE WOLF-BELLY)) (HUNTER (ALIVE T) (PLACE GRANNY-HOME)
 ;; s3 - S7
 ? (apply-effect 'killed 'wolf 'nil *state*)
-? *states
+? *state*
 ((RED-RIDING-HOOD (ALIVE T) (PLACE WOOD)) (WOLF (ALIVE NIL) (PLACE GRANNY-H
 (GRANNY (ALIVE NIL) (PLACE WOLF-BELLY)) (HUNTER (ALIVE T) (PLACE GRANNY-HOM
 ;; s3 - s7
 ? (apply-effect 'risen 'granny 't *state*)
-? *states
+? *state*
 ((RED-RIDING-HOOD (ALIVE T) (PLACE WOOD)) (WOLF (ALIVE NIL) (PLACE GRANNY-H
 (GRANNY (ALIVE T) (PLACE WOLF-BELLY)) (HUNTER (ALIVE T) (PLACE GRANNY-HOME)
 |#
@@ -101,8 +110,19 @@
   (case action
     ('kill 
       ;; Applique l'effet killed sur "person" et
-      ;; risen et moved sur les personnes mangées si "person" = loup
-
+      (apply-effect 'killed person 'nil state)
+      ;; Applique risen et moved sur les personnes mangées si "person" = loup
+      (when (equal person 'wolf)
+       (when (equal (get-value 'granny 'place state) 'wolf-belly)
+         (apply-effect 'risen 'granny 't state)
+         (apply-effect 'moved 'granny cc state)
+         (format t "~%Chasseur : \"La grand-mère est sauvée !\""))
+       (when (equal (get-value 'red-riding-hood 'place state) 'wolf-belly)
+         (apply-effect 'risen 'red-riding-hood 't state)
+         (apply-effect 'moved 'red-riding-hood cc state)
+         (format t "~%Chasseur : \"Le petit chaperon rouge est sauvé !\""))
+      (format t "~%Chasseur : \"Le loup ne fera plus de mal à personne !\"")
+      )
     )
     ('eat 
       ;; Applique l'effet eaten sur "person" et
@@ -130,7 +150,8 @@
     )
   )
 )
-
+(rules 'hunter 'kill 'wolf 'granny-home *state*)
+*state*
 #| TESTS
 :: si *states* = ((RED-RIDING-HOOD (ALIVE T) (PLACE MUM-HOME))
 (WOLF (ALIVE T) (PLACE GRANNY-HOME))

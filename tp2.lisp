@@ -52,6 +52,10 @@
 ? (get-value 'granny 'place *state*)
   GRANNY-HOME
 |#
+
+;; FONCTIONS DE SERVICE 
+
+;; 1
 ;; La fonction apply-effect modifie l'état du monde pour les effets suivants eaten, killed, moved et risen.
 (defun apply-effect (effect person value state)
    ;; Fonction qui applique un seul changement de valeur dans l'état du monde après une action
@@ -63,7 +67,7 @@
   (t (print "Effet donné invalide ! L'effet doit appartenir à l'ensenmble {eaten, killed, moved, risen}."))
   )
 )
-#|
+#| TESTS
 ;; s2 - s3
 ? (apply-effect 'moved 'wolf 'granny-home *state*)
 ? *states
@@ -89,4 +93,50 @@
 ? *states
 ((RED-RIDING-HOOD (ALIVE T) (PLACE WOOD)) (WOLF (ALIVE NIL) (PLACE GRANNY-H
 (GRANNY (ALIVE T) (PLACE WOLF-BELLY)) (HUNTER (ALIVE T) (PLACE GRANNY-HOME)
+|#
+
+;; 2
+(defun rules (actor action &optional person cc state)
+;; Fonction qui applique les effets des actions ou des dialogues"
+  (case action
+    ('kill 
+      ;; Applique l'effet killed sur "person" et
+      ;; risen et moved sur les personnes mangées si "person" = loup
+
+    )
+    ('eat 
+      ;; Applique l'effet eaten sur "person" et
+      ;; moved sur "person" dans le ventre du loup 
+
+    )
+    ('move 
+      ;; Applique moved de "actor" dans cc
+
+    )
+    ('greet 
+      ;; Applique un dialogue
+    
+    )
+    ('give 
+      ;; Applique un dialogue
+
+    )
+    ('tell 
+      #| Applique un dialogue (différent selon les scènes)
+      vous pouvez utiliser cc pour les distinguer
+      ou faire confiance à votre meilleur ami ChatGPT ou
+      autre IA générative pour savoir quoi dire |#
+
+    )
+  )
+)
+
+#| TESTS
+:: si *states* = ((RED-RIDING-HOOD (ALIVE T) (PLACE MUM-HOME))
+(WOLF (ALIVE T) (PLACE GRANNY-HOME))
+(GRANNY (ALIVE T) (PLACE GRANNY-HOME)) (HUNTER (ALIVE T) (PLACE WOOD)))
+? (rules 'wolf 'eat 'granny 'granny-home *state*)
+? *state*
+((RED-RIDING-HOOD (ALIVE T) (PLACE MUM-HOME)) (WOLF (ALIVE T) (PLACE WOOD))
+(GRANNY (ALIVE NIL) (PLACE WOLF-BELLY)) (HUNTER (ALIVE T) (PLACE WOOD)))
 |#

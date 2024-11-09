@@ -150,9 +150,7 @@
         (format t "~%*Le loup voyant que la petite fille était sans défense s'empressa de la dévorer.*")
         (format t "~%Petit Chaperon Rouge: \"Non !\"")
         (format t "~%*Le silence retombe dans la forêt...")
-        (format t "~%Loup: \"Voilà un mets bien jeune et bien tendre, un vrai régal ! \""))
-      )
-    )
+        (format t "~%Loup: \"Voilà un mets bien jeune et bien tendre, un vrai régal ! \""))))
     ('move 
       ;; Applique moved de "actor" dans cc
       (apply-effect 'moved actor cc state)
@@ -162,7 +160,7 @@
          (when (equal cc 'granny-home) (format t "~%*D'humeur aventureuse, le Petit Chaperon Rouge passe par les bois pour se rendre chez mère-grand.*"))
          (format t "~%Petit Chaperon Rouge: *chantonne* \"La la la...\""))
         ((equal actor 'wolf)
-         (when (equal cc 'granny-home) (format t "~%*Le loup se faufile silencieusement vers dans la maison de mère-grand.*"))
+         (when (equal cc 'granny-home) (format t "~%*Le loup se faufile silencieusement vers dans la maison de mère-grand*"))
          (when (equal cc 'wood) (format t "~%*Le loup sortit de la maison de mère-grand pour aller faire une sieste dans les bois.*")))
         ((equal actor 'hunter) 
          (when (equal cc 'granny-home) (format t "~%*Le chasseur se dirige prudemment vers la maison de mère-grand.*"))
@@ -229,7 +227,7 @@
           (format t "~%*Il s'avance prudemment, et soudain il aperçut un loup couché au pied d'un arbre.*"))
          (when (equal cc 'granny-home) 
           (format t "~%Chasseur: \"Tiens, tiens... La mère-grand ne ronfle pas comme ça d'habitude.\"")
-          (format t "~%*Il entre dans la maison et franchit la porte de la chambre. Quand il arrive devant le lit, il voit que c'est un loup qui y est couché.*"))
+          (format t "~%*Il entre dans la chambre. Quand il arrive devant le lit, il voit que c'est un loup qui y est couché.*"))
          (format t "~%Chasseur: \"Ah ! C’est toi, bandit ! Voilà bien longtemps que je te cherche...\""))
         ;; Le dénouement heureux (s8 -> outcome)
         ((and (equal actor 'red-riding-hood) (equal person 'granny))

@@ -140,7 +140,7 @@
         (format t "~%*La grand-mère ouvre la porte*")
         (format t "~%Loup: \"GRRRR !\"")
         (format t "~%*En un bond, le loup se jette sur la grand-mère*"))
-        ;; Cas où le loup mange le Petit Chaperon Rouge dans la forêt
+        ;; Cas où le loup mange le Petit Chaperon Rouge dans la maison de mère-grand
        ((and (equal person 'red-riding-hood) (equal cc 'granny-home))
         (format t "~%Loup: \"MAINTENANT, C'EST TON TOUR !\"")
         (format t "~%*Le loup bondit hors du lit*")

@@ -151,8 +151,9 @@
         (format t "~%*Le loup voyant que la petite fille était sans défense s'empressa de la dévorer.*")
         (format t "~%Petit Chaperon Rouge: \"Non !\"")
         (format t "~%*Le silence retombe dans la forêt...")
-        (format t "~%Loup: \"Voilà un mets bien jeune et bien tendre, un vrai régal ! \"")
+        (format t "~%Loup: \"Voilà un mets bien jeune et bien tendre, un vrai régal ! \""))
       )
+    )
     ('move 
       ;; Applique moved de "actor" dans cc
       (apply-effect 'moved actor cc state)

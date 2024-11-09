@@ -140,25 +140,31 @@
          (format t "~%*La grand-mère ouvre la porte*")
          (format t "~%Loup: \"GRRRR !\"")
          (format t "~%*En un bond, le loup se jette sur la grand-mère*"))
-        ((equal person 'red-riding-hood)
+        ((and (equal person 'red-riding-hood) (equal cc 'granny-home))
          (format t "~%Loup: \"MAINTENANT, C'EST TON TOUR !\"")
          (format t "~%*Le loup bondit hors du lit*")
          (format t "~%Petit Chaperon Rouge: \"AU SECOURS !\"")
-         (format t "~%*Mais il était déjà trop tard...*"))))
-    
+         (format t "~%*Mais il était déjà trop tard...*"))
+      )
+    )
     ('move 
       ;; Applique moved de "actor" dans cc
       (apply-effect 'moved actor cc state)
       (cond
-        ((equal actor 'red-riding-hood)
-         (format t "~%*Le Petit Chaperon Rouge sautille gaiement vers ~a*" cc)
+        ((equal actor 'red-riding-hood) 
+         (when (equal cc 'granny-home) (format t "~%*Le Petit Chaperon Rouge sautille gaiement vers la maison de mère-grand*"))
+         (when (equal cc 'granny-home) (format t "~%*D'humeur aventureuse, le Petit Chaperon Rouge passe par les bois pour se rendre chez mère-grand.*"))
          (format t "~%Petit Chaperon Rouge: *chantonne* \"La la la...\""))
         ((equal actor 'wolf)
-         (format t "~%*Le loup se faufile silencieusement vers ~a*" cc))
-        ((equal actor 'hunter)
-         (format t "~%*Le chasseur se dirige prudemment vers ~a*" cc))
-        (t (format t "~%~a se déplace vers ~a" actor cc))))
-    
+         (when (equal cc' granny-home) (format t "~%*Le loup se faufile silencieusement vers dans la maison de mère-grand.*"))
+         (when (equal cc' wood) (format t "~%*Le loup sortit de la maison de mère-grand pour aller faire une sieste dans les bois.*")))
+        ((equal actor 'hunter) 
+         (when (equal cc 'granny-home) (format t "~%*Le chasseur se dirige prudemment vers la maison de mère-grand.*"))
+         (when (equal cc 'wood) (format t "~%*Le chasseur se rend comme à son habitude aux bois pour chasser du gibier.*")))
+        ; Dialogue par défaut pour décrire un déplacement
+        (t (format t "~%~a se déplace vers ~a" actor cc))
+      )
+    ) 
     ('greet 
       ;; Applique un dialogue de salutations
       (cond
@@ -166,7 +172,10 @@
          (format t "~%Loup: \"Bonjour, ma petite.\"")
          (format t "~%Petit Chaperon Rouge: \"Bonjour, monsieur le Loup.\""))
         ((and (equal actor 'red-riding-hood) (equal person 'granny))
-         (format t "~%Petit Chaperon Rouge: \"Bonjour, grand-mère !\""))
+         (format t "~%Petit Chaperon Rouge: \"Bonjour, grand-mère !\"")
+         (format t "~%Grand-mère: \"Bonjour, ma chérie !\"")
+         )
+        ; Dialogue par défaut pour décrire des salutations
         (t (format t "~%~a: \"Bonjour, ~a.\"" actor person))))
     
     ('give 
@@ -175,6 +184,7 @@
         ((and (equal actor 'red-riding-hood) (equal person 'granny))
          (format t "~%Petit Chaperon Rouge: \"Tenez grand-mère, maman vous envoie une galette et un petit pot de confiture.\"")
          (format t "~%Grand-mère: \"Oh, merci ma chérie ! Ta mère est si attentionnée.\""))
+        ; Dialogue par défaut
         (t (format t "~%~a: \"Voici un présent pour vous, ~a.\"" actor person))))
     
     ('tell 
@@ -190,15 +200,15 @@
          (format t "~%Petit Chaperon Rouge: \"Oh oui ! C'est la première maison après le moulin, là-bas.\"")
          (format t "~%Loup: \"Eh bien, j'y vais aussi. Je prends ce chemin-ci, prends celui-là, nous verrons qui sera le premier !\""))
         
-        ;; Quand le loup trompe la grand-mère (s3)
+        ;; Quand le loup entre dans la maison de la grand mère et lui tend un piège (s3)
         ((and (equal actor 'wolf) (equal person 'granny))
          (format t "~%*Toc toc toc*")
          (format t "~%Grand-mère: \"Qui est là ?\"")
          (format t "~%Loup: *imitant la voix du Petit Chaperon Rouge* \"C'est moi, votre petite-fille !\"")
          (format t "~%Grand-mère: \"Tire la chevillette, et la bobinette cherra.\""))
         
-        ;; La fameuse scène de dialogue (s4 -> s5)
-        ((and (equal actor 'wolf) (equal person 'red-riding-hood))
+        ;; La fameuse scène de dialogue où le loup déguisé en mère-grand tend un piège au petit chaperon rouge (s4 -> s5)
+        ((and (equal actor 'wolf) (equal person 'red-riding-hood) (equal cc 'granny-home))
          (format t "~%Petit Chaperon Rouge: \"Grand-mère, que vous avez de grandes oreilles !\"")
          (format t "~%Loup: \"C'est pour mieux t'écouter, mon enfant.\"")
          (format t "~%Petit Chaperon Rouge: \"Grand-mère, que vous avez de grands yeux !\"")
@@ -219,12 +229,12 @@
          (format t "~%Petit Chaperon Rouge: \"Je promets de ne plus jamais parler aux inconnus dans les bois !\""))
 
         ;; Quand le loup fait la sieste (s6)
-        ((equal actor 'wolf)
-         (format t "~%*Le loup, le ventre bien rempli, s'allonge sur le lit*")
+        ((and (equal actor 'wolf) (equal cc 'wood))
+         (format t "~%*Le loup, le ventre bien rempli, s'allonge au pied d'un arbre*.")
          (format t "~%Loup: \"Aaaah... Une petite sieste me fera du bien... *RONFLE*\""))
 
         ;; Dialogue par défaut
-        (t (format t "~%*Une conversation s'engage entre ~a et ~a*" actor person))))
+        (t (format t "~%*Une conversation s'engage entre ~a et ~a dans le lieu ~a.*" actor person cc))))
     
     (t (format t "~%Erreur : l'action ~a est inconnue." action))))
 

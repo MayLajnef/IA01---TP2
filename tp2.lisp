@@ -136,19 +136,23 @@
       ;; Applique l'effet eaten sur "person" 
       (apply-effect 'eaten person 'nil state)
       (cond 
-        ((equal person 'granny)
-         (format t "~%*Le loup frappe à la porte*")
-         (format t "~%Loup: *d'une voix douce* \"C'est votre petite-fille !\"")
-         (format t "~%*La grand-mère ouvre la porte*")
-         (format t "~%Loup: \"GRRRR !\"")
-         (format t "~%*En un bond, le loup se jette sur la grand-mère*"))
-        ((and (equal person 'red-riding-hood) (equal cc 'granny-home))
-         (format t "~%Loup: \"MAINTENANT, C'EST TON TOUR !\"")
-         (format t "~%*Le loup bondit hors du lit*")
-         (format t "~%Petit Chaperon Rouge: \"AU SECOURS !\"")
-         (format t "~%*Mais il était déjà trop tard...*"))
+       ((equal person 'granny)
+        (format t "~%*La grand-mère ouvre la porte*")
+        (format t "~%Loup: \"GRRRR !\"")
+        (format t "~%*En un bond, le loup se jette sur la grand-mère*"))
+        ;; Cas où le loup mange le Petit Chaperon Rouge dans la forêt
+       ((and (equal person 'red-riding-hood) (equal cc 'granny-home))
+        (format t "~%Loup: \"MAINTENANT, C'EST TON TOUR !\"")
+        (format t "~%*Le loup bondit hors du lit*")
+        (format t "~%Petit Chaperon Rouge: \"AU SECOURS !\"")
+        (format t "~%*Mais il était déjà trop tard...*"))
+       ;; Cas où le loup mange le Petit Chaperon Rouge dans la forêt
+       ((and (equal person 'red-riding-hood) (equal cc 'wood))
+        (format t "~%*Le loup voyant que la petite fille était sans défense s'empressa de la dévorer.*")
+        (format t "~%Petit Chaperon Rouge: \"Non !\"")
+        (format t "~%*Le silence retombe dans la forêt...")
+        (format t "~%Loup: \"Voilà un mets bien jeune et bien tendre, un vrai régal ! \"")
       )
-    )
     ('move 
       ;; Applique moved de "actor" dans cc
       (apply-effect 'moved actor cc state)

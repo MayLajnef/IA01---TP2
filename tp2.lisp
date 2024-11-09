@@ -75,7 +75,10 @@
 )
 
 (apply-effect 'eaten 'granny 'nil *state*)
+(apply-effect 'eaten 'red-riding-hood 'nil *state*)
+(apply-effect 'moved 'hunter 'granny-home *state*)
 *state*
+
 #| TESTS
 ;; s2 - s3
 ? (apply-effect 'moved 'wolf 'granny-home *state*)
@@ -246,7 +249,7 @@
         (t (format t "~%*Une conversation s'engage entre ~a et ~a dans le lieu ~a.*" actor person cc))))
     
     (t (format t "~%Erreur : l'action ~a est inconnue." action))))
-
+*state*
 (rules 'hunter 'kill 'wolf 'granny-home *state*)
 *state*
 #| TESTS

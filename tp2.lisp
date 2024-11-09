@@ -19,7 +19,7 @@
                (hunter (alive t) (place hunter-home))))
 #|
 ;; Après la transition s0-S5, en s5 l'état du monde sera le suivant :    
-*state* 
+? *state* 
 ((red-riding-hood (alive nil) (place wolf-belly)) 
  (wolf (alive t) (place wood)) 
  (granny (alive t) (place granny-home))
@@ -58,11 +58,35 @@
   (format t "~%APPLY EFFECT : ~s ~s ~s" effect person value)
   (cond
   ((or (equal effect 'eaten) (equal effect 'killed) (equal effect 'risen)) (set-value person 'alive value state))
+  ((equal effect 'eaten) (set-value person 'place 'wolf-belly state))
   ((equal effect 'moved) (set-value person 'place value state))
   (t (print "Effet donné invalide ! L'effet doit appartenir à l'ensenmble {eaten, killed, moved, risen}."))
   )
 )
-
-(apply-effect 'moved 'wolf 'granny-home *state*) 
-*state*
-;;((RED-RIDING-HOOD (ALIVE T) (PLACE WOOD)) (WOLF (ALIVE T) (PLACE GRANNY-HOME)) (GRANNY (ALIVE T) (PLACE GRANNY-HOME)) (HUNTER (ALIVE T) (PLACE HUNTER-HOME)))
+#|
+;; s2 - s3
+? (apply-effect 'moved 'wolf 'granny-home *state*)
+? *states
+((RED-RIDING-HOOD (ALIVE T) (PLACE WOOD)) (WOLF (ALIVE T) (PLACE GRANNY-HOM
+(GRANNY (ALIVE T) (PLACE GRANNY-HOME)) (HUNTER (ALIVE T) (PLACE HUNTER-HOME))
+;; s2 - s3
+? (apply-effect 'eaten 'granny 'nil *state*)
+? *states
+((RED-RIDING-HOOD (ALIVE T) (PLACE WOOD)) (WOLF (ALIVE T) (PLACE GRANNY-HOM
+(GRANNY (ALIVE NIL) (PLACE WOLF-BELLY)) (HUNTER (ALIVE T) (PLACE HUNTER-HOM
+;; s3 - s7
+? (apply-effect 'moved 'hunter 'granny-home *state*)
+? *states
+((RED-RIDING-HOOD (ALIVE T) (PLACE WOOD)) (WOLF (ALIVE T) (PLACE GRANNY-HOM
+(GRANNY (ALIVE NIL) (PLACE WOLF-BELLY)) (HUNTER (ALIVE T) (PLACE GRANNY-HOME)
+;; s3 - S7
+? (apply-effect 'killed 'wolf 'nil *state*)
+? *states
+((RED-RIDING-HOOD (ALIVE T) (PLACE WOOD)) (WOLF (ALIVE NIL) (PLACE GRANNY-H
+(GRANNY (ALIVE NIL) (PLACE WOLF-BELLY)) (HUNTER (ALIVE T) (PLACE GRANNY-HOM
+;; s3 - s7
+? (apply-effect 'risen 'granny 't *state*)
+? *states
+((RED-RIDING-HOOD (ALIVE T) (PLACE WOOD)) (WOLF (ALIVE NIL) (PLACE GRANNY-H
+(GRANNY (ALIVE T) (PLACE WOLF-BELLY)) (HUNTER (ALIVE T) (PLACE GRANNY-HOME)
+|#

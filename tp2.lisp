@@ -1,22 +1,29 @@
 ;; Graphe de l'histoire
-(defvar *story* '((initialNode s8 s5 s1)
-              (s1 s2 s5)
-              (s2 s3)
-              (s3 s4 s7 island)
-              (s4 s5 s6 s7)
-              (s5 s6 s7)
-              (s6 s7 )
-              (s7 s8 outcome)
-              (s8 outcome)
+(defvar *story* '((initialNode s1 s9)
+              (s1 s2 s3)
+              (s2 s5)
+              (s3 s4 s6)
+              (s4 s6 outcome)
+              (s5 s8 s10 island)
+              (s6 s7 s10)
+              (s7 s10 outcome)
+              (s8 s9 s11)
+              (s9 s10 island)
+              (s10 s11 island)
+              (s11 s12 outcome)
+              (s12 outcome)
               (island)
               (outcome)
-              ))
+              )
+)
 
 ;; Scène initiale
 (defvar *state* '((red-riding-hood (alive t) (place mum-home)) 
                (wolf (alive t) (place wood)) 
                (granny (alive t) (place granny-home))
-               (hunter (alive t) (place hunter-home))))
+               (hunter (alive t) (place hunter-home)))
+)
+
 #|
 ;; Après la transition s0-S5, en s5 l'état du monde sera le suivant :    
 ? *state* 
@@ -31,11 +38,13 @@
  (granny (alive t) (place granny-home))
  (hunter (alive t) (place wood)))
  |#
+
  (defun set-value (person property val state)
   ;;Fonction permettant de mettre à jour la valeur  
   ;;d'une propriété d'un protagoniste dans l'état du monde
   (setf (cadr (assoc property (cdr (assoc person state)))) val)
-  )
+)
+
 #| 
 ? (set-value 'wolf 'alive nil *states*) 
   NIL 
@@ -47,7 +56,9 @@
 (defun get-value (person property state)
   ;;Fonction permettant d'obtenir la valeur d'une propriété 
   ;;d'un protagoniste depuis l'état du monde"
-  (cadr (assoc property (cdr (assoc person state)))))
+  (cadr (assoc property (cdr (assoc person state))))
+)
+
 #|
 ? (get-value 'granny 'place *state*)
   GRANNY-HOME
@@ -55,7 +66,6 @@
 
 ;; FONCTIONS DE SERVICE 
 
-;; 1
 ;; La fonction apply-effect modifie l'état du monde pour les effets suivants eaten, killed, moved et risen.
 (defun apply-effect (effect person value state)
   ;; Fonction qui applique un changement de valeur dans l'état du monde
@@ -132,7 +142,8 @@
           (format t "~%Chasseur: \"Dieu soit loué, elle respire encore !\"")
           (format t "~%Grand-mère: \"Oh... Que s'est-il passé ?\"")
           (format t "~%Chasseur: \"Ne craignez rien, tout est fini maintenant, la vilaine bête n'est plus de ce monde.\""))
-    ))
+      )
+    )
     
     ('eat 
       ;; Applique l'effet eaten sur "person" 
@@ -153,7 +164,10 @@
         (format t "~%*Le loup voyant que la petite fille était sans défense s'empressa de la dévorer.*")
         (format t "~%Petit Chaperon Rouge: \"Non !\"")
         (format t "~%*Le silence retombe dans la forêt...")
-        (format t "~%Loup: \"Voilà un mets bien jeune et bien tendre, un vrai régal ! \""))))
+        (format t "~%Loup: \"Voilà un mets bien jeune et bien tendre, un vrai régal ! \""))
+      )
+    )
+
     ('move 
       ;; Applique moved de "actor" dans cc
       (apply-effect 'moved actor cc state)
@@ -171,7 +185,8 @@
         ; Dialogue par défaut pour décrire un déplacement
         (t (format t "~%~a se déplace vers ~a" actor cc))
       )
-    ) 
+    )
+
     ('greet 
       ;; Applique un dialogue de salutations
       (cond
@@ -261,3 +276,112 @@
 ((RED-RIDING-HOOD (ALIVE T) (PLACE MUM-HOME)) (WOLF (ALIVE T) (PLACE WOOD))
 (GRANNY (ALIVE NIL) (PLACE WOLF-BELLY)) (HUNTER (ALIVE T) (PLACE WOOD)))
 |#
+
+;; Cette fonction s'occupe des changements de scène, d'y appliquer les rules + moves nécessaires 
+(defun apply-change-scene (change state)
+  (cond
+    ((equal change '(initialNode s1))
+      (progn 
+        (rules 'red-riding-hood 'move nil 'wood *state*)
+        (rules 'red-riding-hood 'greet 'wolf 'wood *state*)
+      )
+    )
+    ((equal change '(initialNode s9))
+      (progn 
+        (rules 'red-riding-hood 'move nil 'wood *state*)
+        (rules 'red-riding-hood 'greet 'wolf *state*)
+        (rules 'wolf 'eat 'red-riding-hood 'wood *state*)
+      )
+    )
+    ((equal change '(s1 s2))
+      (progn 
+        (rules 'red-riding-hood 'tell 'wolf 'wood *state*)
+        
+      )
+    )
+    ((equal change '(s1 s3))
+      (progn 
+        (rules 'red-riding-hood 'move nil 'granny-home *state*)
+        (rules 'red-riding-hood 'greet 'granny 'granny-home *state*)
+      )
+    )
+    ((equal change '(s2 s5))
+      (progn
+        (rules 'wolf 'move nil 'granny-home *state*)
+        (rules 'wolf 'tell 'granny 'granny-home *state*)
+        (rules 'wolf 'eat 'granny 'granny-home *state*)
+      )
+    )
+    ((equal change '(s3 s4))
+      (progn
+        (rules 'red-riding-hood 'give 'granny 'granny-home *state*)
+      )
+    )
+    ((equal change '(s3 s6))
+      (progn
+        (rules 'wolf 'move nil 'granny-home *state*)
+      )
+    )
+    ((equal change '(s4 s6))
+      (progn
+        (rules 'wolf 'move nil 'granny-home *state*)
+      )
+    )
+    ((equal change '(s5 s8))
+      (progn
+        (rules 'wolf 'tell nil 'granny-home *state*)
+      )
+    )
+    ((equal change '(s5 s10))
+      (progn
+        (rules 'hunter 'move nil 'granny-home *state*)
+        (rules 'hunter 'tell 'wolf 'granny-home *state*)
+        (rules 'hunter 'kill 'wolf 'granny-home *state*)
+      )
+    )
+    ((equal change '(s6 s10))
+      (progn
+        (rules 'wolf 'eat 'red-riding-hood 'granny-home *state*)
+        (rules 'wolf 'eat 'granny 'granny-home *state*)
+      )
+    )
+    ((equal change '(s7 s10))
+      (progn
+        (rules 'wolf 'move nil 'wood *state*)
+        (rules 'wolf 'eat 'red-riding-hood 'wood *state*)
+        (rules 'wolf 'eat 'granny 'wood *state*)
+      )
+    )
+    ((equal change '(s8 s9))
+      (progn
+        (rules 'red-riding-hood 'move nil 'granny-home *state*)
+        (rules 'wolf 'tell 'red-riding-hood 'granny-home *state*)
+        (rules 'wolf 'eat 'red-riding-hood 'granny-home *state*)
+      )
+    )
+    ((equal change '(s8 s11))
+      (progn
+        (rules 'hunter 'move nil 'granny-home *state*)
+        (rules 'hunter 'tell 'wolf 'granny-home *state*)
+        (rules 'hunter 'kill 'wolf 'granny-home *state*)
+      )
+    )
+    ((equal change '(s9 s10))
+      (progn
+        (rules 'wolf 'move nil 'wood *state*)
+      )
+    )
+    ((equal change '(s10 s11)
+      (progn
+        (rules 'hunter 'move nil 'wood *state*)
+        (rules 'hunter 'tell 'wolf 'wood *state*)
+        (rules 'hunter 'kill 'wolf 'wood *state*)
+      )
+    )
+  )
+  ((equal change '(s11 s12))
+      (progn
+        (rules 'red-riding-hood 'give 'granny nil *state*)
+      )
+  )
+) 

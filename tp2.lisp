@@ -84,10 +84,10 @@
    )
 )
 
-(apply-effect 'eaten 'granny 'nil *state*)
-(apply-effect 'eaten 'red-riding-hood 'nil *state*)
-(apply-effect 'moved 'hunter 'granny-home *state*)
-*state*
+;;(apply-effect 'eaten 'granny 'nil *state*)
+;;(apply-effect 'eaten 'red-riding-hood 'nil *state*)
+;;(apply-effect 'moved 'hunter 'granny-home *state*)
+;;*state*
 
 #| TESTS
 ;; s2 - s3
@@ -121,7 +121,7 @@
 ;; Fonction qui applique les effets des actions ou des dialogues
 (defun rules (actor action &optional person cc state)
   (case action
-    ('kill 
+    (kill 
       ;; Applique l'effet killed sur "person" 
       (apply-effect 'killed person 'nil state)
       (when (equal person 'wolf)
@@ -145,7 +145,7 @@
       )
     )
     
-    ('eat 
+    (eat 
       ;; Applique l'effet eaten sur "person" 
       (apply-effect 'eaten person 'nil state)
       (cond 
@@ -168,7 +168,7 @@
       )
     )
 
-    ('move 
+    (move 
       ;; Applique moved de "actor" dans cc
       (apply-effect 'moved actor cc state)
       (cond
@@ -187,7 +187,7 @@
       )
     )
 
-    ('greet 
+    (greet 
       ;; Applique un dialogue de salutations
       (cond
         ((and (equal actor 'red-riding-hood) (equal person 'wolf))
@@ -209,7 +209,7 @@
         ; Dialogue par défaut
         (t (format t "~%~a: \"Voici un présent pour vous, ~a.\"" actor person))))
     
-    ('tell 
+    (tell 
       #| Applique un dialogue (différent selon les scènes)
       Vous pouvez utiliser cc pour les distinguer ou faire confiance à votre meilleur ami ChatGPT ou autre IA générative pour savoir quoi dire.
       Pour ma part, j'ai utilisé  Claude.ai. |#
@@ -263,10 +263,13 @@
         ;; Dialogue par défaut
         (t (format t "~%*Une conversation s'engage entre ~a et ~a dans le lieu ~a.*" actor person cc))))
     
-    (t (format t "~%Erreur : l'action ~a est inconnue." action))))
-*state*
-(rules 'hunter 'kill 'wolf 'granny-home *state*)
-*state*
+    (t (format t "~%Erreur : l'action ~a est inconnue." action))
+  )
+)
+
+;;*state*
+;;(rules 'hunter 'kill 'wolf 'granny-home *state*)
+;;*state*
 #| TESTS
 :: si *states* = ((RED-RIDING-HOOD (ALIVE T) (PLACE MUM-HOME))
 (WOLF (ALIVE T) (PLACE GRANNY-HOME))
@@ -282,106 +285,134 @@
   (cond
     ((equal change '(initialNode s1))
       (progn 
-        (rules 'red-riding-hood 'move nil 'wood *state*)
-        (rules 'red-riding-hood 'greet 'wolf 'wood *state*)
+        (rules 'red-riding-hood 'move nil 'wood state)
+        (rules 'red-riding-hood 'greet 'wolf 'wood state)
       )
     )
     ((equal change '(initialNode s9))
       (progn 
-        (rules 'red-riding-hood 'move nil 'wood *state*)
-        (rules 'red-riding-hood 'greet 'wolf *state*)
-        (rules 'wolf 'eat 'red-riding-hood 'wood *state*)
+        (rules 'red-riding-hood 'move nil 'wood state)
+        (rules 'red-riding-hood 'greet 'wolf state)
+        (rules 'wolf 'eat 'red-riding-hood 'wood state)
       )
     )
     ((equal change '(s1 s2))
       (progn 
-        (rules 'red-riding-hood 'tell 'wolf 'wood *state*)
+        (rules 'red-riding-hood 'tell 'wolf 'wood state)
         
       )
     )
     ((equal change '(s1 s3))
       (progn 
-        (rules 'red-riding-hood 'move nil 'granny-home *state*)
-        (rules 'red-riding-hood 'greet 'granny 'granny-home *state*)
+        (rules 'red-riding-hood 'move nil 'granny-home state)
+        (rules 'red-riding-hood 'greet 'granny 'granny-home state)
       )
     )
     ((equal change '(s2 s5))
       (progn
-        (rules 'wolf 'move nil 'granny-home *state*)
-        (rules 'wolf 'tell 'granny 'granny-home *state*)
-        (rules 'wolf 'eat 'granny 'granny-home *state*)
+        (rules 'wolf 'move nil 'granny-home state)
+        (rules 'wolf 'tell 'granny 'granny-home state)
+        (rules 'wolf 'eat 'granny 'granny-home state)
       )
     )
     ((equal change '(s3 s4))
       (progn
-        (rules 'red-riding-hood 'give 'granny 'granny-home *state*)
+        (rules 'red-riding-hood 'give 'granny 'granny-home state)
       )
     )
     ((equal change '(s3 s6))
       (progn
-        (rules 'wolf 'move nil 'granny-home *state*)
+        (rules 'wolf 'move nil 'granny-home state)
       )
     )
     ((equal change '(s4 s6))
       (progn
-        (rules 'wolf 'move nil 'granny-home *state*)
+        (rules 'wolf 'move nil 'granny-home state)
       )
     )
     ((equal change '(s5 s8))
       (progn
-        (rules 'wolf 'tell nil 'granny-home *state*)
+        (rules 'wolf 'tell nil 'granny-home state)
       )
     )
     ((equal change '(s5 s10))
       (progn
-        (rules 'hunter 'move nil 'granny-home *state*)
-        (rules 'hunter 'tell 'wolf 'granny-home *state*)
-        (rules 'hunter 'kill 'wolf 'granny-home *state*)
+        (rules 'hunter 'move nil 'granny-home state)
+        (rules 'hunter 'tell 'wolf 'granny-home state)
+        (rules 'hunter 'kill 'wolf 'granny-home state)
       )
     )
     ((equal change '(s6 s10))
       (progn
-        (rules 'wolf 'eat 'red-riding-hood 'granny-home *state*)
-        (rules 'wolf 'eat 'granny 'granny-home *state*)
+        (rules 'wolf 'eat 'red-riding-hood 'granny-home state)
+        (rules 'wolf 'eat 'granny 'granny-home state)
       )
     )
     ((equal change '(s7 s10))
       (progn
-        (rules 'wolf 'move nil 'wood *state*)
-        (rules 'wolf 'eat 'red-riding-hood 'wood *state*)
-        (rules 'wolf 'eat 'granny 'wood *state*)
+        (rules 'wolf 'move nil 'wood state)
+        (rules 'wolf 'eat 'red-riding-hood 'wood state)
+        (rules 'wolf 'eat 'granny 'wood state)
       )
     )
     ((equal change '(s8 s9))
       (progn
-        (rules 'red-riding-hood 'move nil 'granny-home *state*)
-        (rules 'wolf 'tell 'red-riding-hood 'granny-home *state*)
-        (rules 'wolf 'eat 'red-riding-hood 'granny-home *state*)
+        (rules 'red-riding-hood 'move nil 'granny-home state)
+        (rules 'wolf 'tell 'red-riding-hood 'granny-home state)
+        (rules 'wolf 'eat 'red-riding-hood 'granny-home state)
       )
     )
     ((equal change '(s8 s11))
       (progn
-        (rules 'hunter 'move nil 'granny-home *state*)
-        (rules 'hunter 'tell 'wolf 'granny-home *state*)
-        (rules 'hunter 'kill 'wolf 'granny-home *state*)
+        (rules 'hunter 'move nil 'granny-home state)
+        (rules 'hunter 'tell 'wolf 'granny-home state)
+        (rules 'hunter 'kill 'wolf 'granny-home state)
       )
     )
     ((equal change '(s9 s10))
       (progn
-        (rules 'wolf 'move nil 'wood *state*)
+        (rules 'wolf 'move nil 'wood state)
       )
     )
-    ((equal change '(s10 s11)
+    ((equal change '(s10 s11))
       (progn
-        (rules 'hunter 'move nil 'wood *state*)
-        (rules 'hunter 'tell 'wolf 'wood *state*)
-        (rules 'hunter 'kill 'wolf 'wood *state*)
+        (rules 'hunter 'move nil 'wood state)
+        (rules 'hunter 'tell 'wolf 'wood state)
+        (rules 'hunter 'kill 'wolf 'wood state)
+      )
+    )
+    ((equal change '(s11 s12))
+      (progn
+        (rules 'red-riding-hood 'give 'granny nil state)
+      )
+    )
+    ((or (equal change '(s4 outcome)) (equal change '(s7 outcome)))
+      (progn
+        (format t "~%FIN HEUREUSE\"")
+      )
+    )
+    ((equal change '(s12 outcome))
+      (progn
+        (rules 'red-riding-hood 'tell 'granny nil state)
+      )
+    )
+    ((or (or (equal change '(s10 island)) (equal change '(s9 island))) (equal change '(s5 island)))
+      (progn 
+        (format t "~%FIN MALHEUREUSE\"")
       )
     )
   )
-  ((equal change '(s11 s12))
-      (progn
-        (rules 'red-riding-hood 'give 'granny nil *state*)
-      )
-  )
-) 
+)
+
+;;(apply-change-scene '(initialNode s1) *state*)
+;;(apply-change-scene '(initialNode s9) *state*)
+;;(apply-change-scene '(s1 s2) *state*)
+;;(apply-change-scene '(s1 s3) *state*)
+;;(apply-change-scene '(s3 s4) *state*)
+;;(apply-change-scene '(s3 s6) *state*)
+;;(apply-change-scene '(s4 s6) *state*)
+;;(apply-change-scene '(s4 outcome) *state*)
+;;(apply-change-scene '(s7 outcome) *state*)
+(apply-change-scene '(s5 island) *state*)
+(apply-change-scene '(s10 island) *state*)
+(apply-change-scene '(s9 island) *state*)

@@ -1,15 +1,19 @@
 # Rapport TP n°2 - Little Red Riding Hood
 
+
 ## Page de Garde
 
-**Binôme :** 
+**Binôme :**
 - Julien HELLEC
 - May LAJNEF
-  
-**Date :** 20/11/2024  
 
-**Cours :** IA01
+**Date :** 20/11/2024
 
+**Cours :** IA01 - Intelligence Artificielle
+
+**Université de Technologie de Compiègne**
+
+![Image Petit Chaperon Rouge](https://i.natgeofe.com/n/cddedc8b-6fea-4699-b3a6-184a3ed246fc/73840.jpg?w=1280&h=1842)
 
 
 ## Sommaire
@@ -18,25 +22,35 @@
 2. [Objectifs](#objectifs)
 3. [Approche](#approche)
 4. [Explication de fonctions](#explication-de-fonctions)
-    1. [Fonctions de service](#fonctions-de-service)
-    2. [Génération du scénario](#génération-du-scénario)
-    3. [Partie créative] (#partie-créative)
-5. [Conclusion](#conclusion)
+   1. [Fonctions de service](#fonctions-de-service)
+   2. [Génération du scénario](#génération-du-scénario)
+5. [Partie créative](#partie-créative)
+6. [Conclusion](#conclusion)
 
 ## Introduction
 
-## Objectifs 
+Ce rapport présente notre travail sur le TP n°2 du cours IA01, portant sur la génération automatique d'histoires intéractives. Il s'agit de développer un générateur d'histoires utilisant une recherche en profondeur dans un espace d'états pour proposer des scénarios différents de l'histoire du Petit Chaperon Rouge.
+
+## Objectifs
+
+L'objectif principal de ce TP est de créer un système capable de générer des variations du conte du Petit Chaperon Rouge en utilisant un algorithme de recherche en profondeur d'abord. Plus spécifiquement, nous devions :
+
+1. Développer des fonctions pour modifier l'état du monde à chaque changement de scène
+2. Créer un générateur de scénarios basé sur une recherche en profondeur
+3. Ajouter des éléments créatifs pour enrichir l'expérience narrative
 
 ## Approche
 
-**Représentation de l'espace d'état :**
+### Représentation de l'espace d'états
 
-Les personnages et l'état du monde sont représentés sous forme de listes associatives (alors que chaque protagoniste a des propriétés comme alive et place). Voici un exemple de la représentation de l'état initial :
+Nous avons choisi de représenter les personnages et l'état du monde sous forme de listes associatives. Chaque protagoniste possède des propriétés telles que "alive" et "place". Voici un exemple de la représentation de l'état initial :
 
-(defvar *state* '((red-riding-hood (alive t) (place mum-home))
-                  (wolf (alive t) (place wood))
-                  (granny (alive t) (place granny-home))
-                  (hunter (alive t) (place hunter-home))))
+```lisp
+(defvar *state* 
+  '((red-riding-hood (alive t) (place mum-home))
+    (wolf (alive t) (place wood))
+    (granny (alive t) (place granny-home))
+    (hunter (alive t) (place hunter-home))))
 
 
 ## Explication de fonctions
@@ -370,7 +384,7 @@ Voici le code de la fonction successeurs-valides :
 
 
 
-### Partie créative
+## Partie créative
 
 
 ## Conclusion

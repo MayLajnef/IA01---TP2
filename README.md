@@ -61,7 +61,7 @@ Nous avons choisi de représenter les personnages et l'état du monde sous forme
 
 Voici le code de la fonction apply-effect :
 
-```
+```lisp
 (defun apply-effect (effect person value state)
   ;; Fonction qui applique un changement de valeur dans l'état du monde
   (format t "~%APPLY EFFECT : ~s ~s ~s" effect person value)

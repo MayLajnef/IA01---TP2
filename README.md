@@ -404,6 +404,18 @@ Exemples de tests et leurs outputs :
 
 #### Fonction generate_scenario
 
+Voici le code de la fonction generate_scenario :
+
+```lisp
+
+```
+
+Le test de cette fonction renvoie toujours la même solution : 
+```lisp
+
+```
+![Résultat du test](https://img.jpg)
+
 
 ## Partie créative
 

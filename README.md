@@ -407,12 +407,36 @@ Exemples de tests et leurs outputs :
 Voici le code de la fonction generate_scenario :
 
 ```lisp
-
+(defun generate_scenario (etat sortie story state &optional (scenario nil))
+ (format t "~%========= Exploration de l'état : ~s =========" etat)
+ (format t "Chemin actuel : ~s" (reverse (cons etat scenario)))
+ (format t "~%État du monde actuel : ~s" state)
+ ;; Condition d'arrêt : si l'état actuel est l'objectif
+ (if (equal etat sortie)
+ (progn
+ (format t "~%Scénario complet trouvé : ~s" (reverse (cons etat scenario)))
+ (reverse (cons etat scenario))) ; Retourne le scénario atteint
+ ;; Exploration récursive en profondeur
+ (let ((successeurs (successeursValides etat story scenario)))
+ (if (null successeurs)
+ (progn
+ (format t "~%Impasse à l'état ~s, retour en arrière..." etat)
+ nil) ; Retourne NIL si aucun successeur valide
+ ;; Exploration de chaque successeur
+ (dolist (succ successeurs)
+ (format t "~%De ~s je vais en ~s" etat succ) ; Affiche la transition
+ (let ((nouvel-etat-monde (copy-list state))) ; Copie de l'état du monde
+ ;; Applique les changements de scène pour cette transition
+ (apply-change-scene `(,etat ,succ) nouvel-etat-monde)
+ ;; Appel récursif pour explorer le successeur
+ (let ((result (generate_scenario succ sortie story nouvel-etat-monde (cons etat scenario))))
+ (when result ; Retourne le premier chemin réussi trouvé
+ (return result)))))))))
 ```
 
 Le test de cette fonction renvoie toujours la même solution : 
 ```lisp
-
+(generate_scenario 'initialNode 'outcome *story* *state*)
 ```
 ![Résultat du test](https://img.jpg)
 

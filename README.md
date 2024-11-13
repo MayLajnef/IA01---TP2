@@ -438,7 +438,7 @@ Le test de cette fonction renvoie toujours la même solution :
 ```lisp
 (generate_scenario 'initialNode 'outcome *story* *state*)
 ```
-![Résultat du test](https://img.jpg)
+![Résultat du test][(https://github.com/MayLajnef/IA01---TP2/blob/main/Tests/test%20generate%20scenario.png?raw=true)]
 
 
 ## Partie créative

@@ -68,9 +68,9 @@ Voici le code de la fonction apply-effect :
 
 Cette fonction a pour but d'appliquer les effets des futurs actions des personnages à l'état de l'histoire. Elle nous servira par la suite pour faire état des personnages (localisation dans l'univers de l'histoire, en vie ou non) pour pouvoir décider des suites potentielles de l'histoire (successeurs valide).
 
-Concernant l'algorythme de cette fonction il n'y a rien de notable qui mérite d'être longuement commenté. On fait simplement une dinsjonction des cas à l'aide d'un cond pour différencier les différents états possibles ansi qu'un affichage par défaut lors de l'application de l'effet.
+Concernant l'algorithme de cette fonction, il n'y a rien de notable qui mérite d'être longuement commenté. On fait simplement une dinsjonction de cas à l'aide d'un cond pour différencier les différents états possibles ansi qu'un affichage par défaut lors de l'application de l'effet.
 
-La seule particularité de cette fonction et le changement de la localisation du personnage mangé par le loup à "wolf-belly" 
+La seule particularité de cette fonction est le changement de la localisation du personnage mangé par le loup à "wolf-belly". 
 
 #### 2. Fonction rules
 
@@ -226,9 +226,9 @@ Voici le code de la fonction rules :
 )
 ```
 
-Cette fonction à pour but de définir les règles de passages entre les différents états de l'histoire. Elle fait la liste de tous les dialogues et cas possibles pour les différents effets. Par exemple, lorsque que le loup mange le chaperon rouge dans la maison de la grand-mère où dans le bois, les lignes de dialogues ne sont pas les mêmes.
+Cette fonction a pour but de définir les règles de passages entre les différents états de l'histoire. Elle fait la liste de tous les dialogues et cas possibles pour les différents effets. Par exemple, lorsque que le loup mange le chaperon rouge dans la maison de la grand-mère ou bien dans le bois ; les de dialogues ne sont pas les mêmes.
 
-Cette fonction applique également les bons effets en fonction des prémisses validé.
+Cette fonction applique également les bons effets en fonction des prémisses valides.
 
 #### 3. Fonction apply-change-scene
 
@@ -359,7 +359,8 @@ Voici le code de la fonction apply-change-scene :
 )
 ```
 
-Cette fonction à pour but de faire appliquer les bonnes règles lors des changements d'états (scène) de l'histoire.
+Cette fonction a pour but de faire appliquer les bonnes règles lors des changements d'états (passages d'une scène à une autre) de l'histoire.
+Elle gère les dialogues et les déplacments et les actions des personnages de manière cohérente.
 
 ### Génération du scénario 
 

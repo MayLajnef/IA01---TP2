@@ -1,4 +1,75 @@
-# Rapport
+
+# Rapport TP n°2 - Little Red Riding Hood
+
+## Page de Garde
+
+**Binôme :** 
+- Julien HELLEC
+- May LAJNEF
+  
+**Date :** 20/11/2024  
+
+**Cours :** IA01
+
+
+
+## Sommaire
+
+1. [Introduction](#introduction)
+2. [Objectifs](#objectifs)
+3. [Approche](#approche)
+    1. [Modélisation des Personnages](#modélisation-des-personnages)
+    2. [Interaction entre les Personnages](#interaction-entre-les-personnages)
+4. [Code](#code)
+    1. [Fonctions de service] (#fonctions-de-service)
+    2. [Génération du scénario](#génération-du-scénario)
+    3. [Partie créative] (#partie-créative)
+5. [Conclusion](#conclusion)
+
+
+---
+
+## Introduction
+
+Ce rapport présente le travail réalisé dans le cadre du TP portant sur l'implémentation de règles pour un scénario impliquant le loup dans l'histoire du Petit Chaperon Rouge. L'objectif principal était de modéliser les interactions entre le loup et les différents personnages, tout en respectant les spécifications du projet.
+
+## Objectifs
+
+Les objectifs de ce TP étaient les suivants :
+- Comprendre les règles du scénario de l'histoire du Petit Chaperon Rouge.
+- Implémenter des fonctions permettant de gérer les interactions entre le loup et les personnages.
+- Tester les fonctionnalités du programme à l'aide de cas d'essai.
+
+## Approche
+
+### Modélisation des Personnages
+
+Le loup et les autres personnages (comme le Petit Chaperon Rouge et la grand-mère) ont été modélisés sous forme d'objets en Common Lisp. Chaque personnage a des attributs tels que le nom, l'état (vivant ou non) et la position dans l'histoire.
+
+### Interaction entre les Personnages
+
+Les règles d'interaction entre le loup et les personnages ont été codées sous forme de fonctions qui modifient l'état des personnages en fonction des actions du loup.
+
+## Code
+
+### Exemple de Code
+
+Voici un exemple de code qui modélise l'interaction entre le loup et le Petit Chaperon Rouge :
+
+```lisp
+(defclass personnage ()
+  ((nom :initarg :nom :accessor nom)
+   (etat :initarg :etat :accessor etat)))
+
+(defclass loup (personnage) ())
+
+(defclass petit-chaperon-rouge (personnage) ())
+
+(defun interagir-loup-chaperon (loup chaperon)
+  (when (and (eq (etat loup) 'vivant) (eq (etat chaperon) 'vivant))
+    (setf (etat chaperon) 'mangé)
+    (format t "Le loup a mangé le Petit Chaperon Rouge~%")))
+
 
 ## Explication de fonction
 
@@ -324,6 +395,9 @@ Cette fonction à pour but de faire appliquer les bonnes règles lors des change
 ### Fonction successeurs-valides
 
 Voici le code de la fonction successeurs-valides :
+...
+
+## Conclusion :
 
 
 Voici l'algorythme de la fonction successeurs-valides :

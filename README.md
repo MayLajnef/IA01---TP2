@@ -378,10 +378,31 @@ Elle gère les dialogues, les déplacments et les actions des personnages de man
 
 ### Génération du scénario 
 
-#### Fonction successeurs-valides
+#### Fonction successeursValides
 
 Voici le code de la fonction successeursValides :
+```lisp
+(defun successeursValides (etat story chemin)
+  (let ((succ (cdr (assoc etat story))))  ; Obtenir les successeurs de l'état actuel dans l'histoire
+    (dolist (x succ succ)
+      (if (member x chemin)                  ; Vérifie si l'état a déjà été visité
+          (setq succ (remove x succ))))))    ; Supprime les états déjà visités de la liste des successeurs
+```
+Cette fonction permet de renvoyer les successeurs valides d'un noeud du graphe de l'histoire, c'est à dire tous ceux qui ne sont pas dans le chemin parcouru mis en argument. 
 
+Exemples de tests et leurs outputs :
+```lisp
+(successeursValides 's1 *story* '(initialNode s2))
+```
+![Résultat du test](https://img.jpg)
+
+```lisp
+ (successeursValides 's4 *story* '(initialNode s1 s2 s3 s5))
+```
+![Résultat du test](https://img.jpg)
+
+
+#### Fonction generate_scenario
 
 
 ## Partie créative

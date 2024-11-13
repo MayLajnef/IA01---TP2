@@ -51,7 +51,7 @@ Nous avons choisi de représenter les personnages et l'état du monde sous forme
     (wolf (alive t) (place wood))
     (granny (alive t) (place granny-home))
     (hunter (alive t) (place hunter-home))))
-
+```
 
 ## Explication de fonctions
 
@@ -90,7 +90,7 @@ La seule particularité de cette fonction est le changement de la localisation d
 
 Voici le code de la fonction rules :
 
-```
+```lisp
 (defun rules (actor action &optional person cc state)
   (case action
     (kill 
@@ -248,7 +248,7 @@ Cette fonction applique également les bons effets en fonction des prémisses va
 
 Voici le code de la fonction apply-change-scene :
 
-```
+```lisp
 (defun apply-change-scene (change state)
   (cond
     ((equal change '(initialNode s1))
@@ -374,13 +374,13 @@ Voici le code de la fonction apply-change-scene :
 ```
 
 Cette fonction a pour but de faire appliquer les bonnes règles lors des changements d'états (passages d'une scène à une autre) de l'histoire.
-Elle gère les dialogues et les déplacments et les actions des personnages de manière cohérente.
+Elle gère les dialogues, les déplacments et les actions des personnages de manière cohérente.
 
 ### Génération du scénario 
 
 #### Fonction successeurs-valides
 
-Voici le code de la fonction successeurs-valides :
+Voici le code de la fonction successeursValides :
 
 
 

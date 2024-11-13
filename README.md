@@ -23,6 +23,21 @@
     3. [Partie créative] (#partie-créative)
 5. [Conclusion](#conclusion)
 
+## Introduction
+
+## Objectifs 
+
+## Approche
+
+**Représentation de l'espace d'état :**
+
+Les personnages et l'état du monde sont représentés sous forme de listes associatives (alors que chaque protagoniste a des propriétés comme alive et place). Voici un exemple de la représentation de l'état initial :
+
+(defvar *state* '((red-riding-hood (alive t) (place mum-home))
+                  (wolf (alive t) (place wood))
+                  (granny (alive t) (place granny-home))
+                  (hunter (alive t) (place hunter-home))))
+
 
 ## Explication de fonctions
 
@@ -51,7 +66,7 @@ Voici le code de la fonction apply-effect :
 )
 ```
 
-Cette fonction à pour but d'appliquer les effets des futurs actions des personnages à l'état de l'histoire. Elle nous servira par la suite pour faire état des personnages (localisation dans l'univers de l'histoire, en vie ou non) pour pouvoir décider des suites potentielles de l'histoire (successeurs valide).
+Cette fonction a pour but d'appliquer les effets des futurs actions des personnages à l'état de l'histoire. Elle nous servira par la suite pour faire état des personnages (localisation dans l'univers de l'histoire, en vie ou non) pour pouvoir décider des suites potentielles de l'histoire (successeurs valide).
 
 Concernant l'algorythme de cette fonction il n'y a rien de notable qui mérite d'être longuement commenté. On fait simplement une dinsjonction des cas à l'aide d'un cond pour différencier les différents états possibles ansi qu'un affichage par défaut lors de l'application de l'effet.
 

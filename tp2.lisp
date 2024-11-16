@@ -73,12 +73,6 @@
    (t (print "Effet invalide ! L'effet doit être parmi {eaten, killed, moved, risen}."))
    )
 )
-
-(apply-effect 'eaten 'granny 'nil *state*)
-(apply-effect 'eaten 'red-riding-hood 'nil *state*)
-(apply-effect 'moved 'hunter 'granny-home *state*)
-*state*
-
 #| TESTS
 ;; s2 - s3
 ? (apply-effect 'moved 'wolf 'granny-home *state*)
@@ -260,8 +254,8 @@
 ((RED-RIDING-HOOD (ALIVE T) (PLACE MUM-HOME)) (WOLF (ALIVE T) (PLACE WOOD))
 (GRANNY (ALIVE NIL) (PLACE WOLF-BELLY)) (HUNTER (ALIVE T) (PLACE WOOD)))
 |#
-;; Graphe de l'histoire
-(defvar *story* '((initialNode s1 s9)
+;; Graphe de l'histoire dans la partie créative à enrichir 
+(defvar *creative_story* '((initialNode s1 s9)
               (s1 s2 s3)
               (s2 s5)
               (s3 s4 s6)
@@ -276,8 +270,7 @@
               (s12 outcome)
               (island)
               (outcome)
-              )
-)
+              ))
 
 ;; Scène initiale
 (defvar *state* '((red-riding-hood (alive t) (place mum-home)) 
@@ -301,12 +294,11 @@
  (hunter (alive t) (place wood)))
  |#
 
- (defun set-value (person property val state)
+(defun set-value (person property val state)
   ;;Fonction permettant de mettre à jour la valeur  
   ;;d'une propriété d'un protagoniste dans l'état du monde
   (setf (cadr (assoc property (cdr (assoc person state)))) val)
 )
-
 #| 
 ? (set-value 'wolf 'alive nil *states*) 
   NIL 
@@ -320,7 +312,6 @@
   ;;d'un protagoniste depuis l'état du monde"
   (cadr (assoc property (cdr (assoc person state))))
 )
-
 #|
 ? (get-value 'granny 'place *state*)
   GRANNY-HOME
@@ -328,7 +319,7 @@
 
 ;; FONCTIONS DE SERVICE 
 
-;; La fonction apply-effect modifie l'état du monde pour les effets suivants eaten, killed, moved et risen.
+;; 1. La fonction apply-effect modifie l'état du monde pour les effets suivants eaten, killed, moved et risen.
 (defun apply-effect (effect person value state)
   ;; Fonction qui applique un changement de valeur dans l'état du monde
   (format t "~%APPLY EFFECT : ~s ~s ~s" effect person value)
@@ -529,9 +520,6 @@
   )
 )
 
-;;*state*
-;;(rules 'hunter 'kill 'wolf 'granny-home *state*)
-;;*state*
 #| TESTS
 :: si *states* = ((RED-RIDING-HOOD (ALIVE T) (PLACE MUM-HOME))
 (WOLF (ALIVE T) (PLACE GRANNY-HOME))
@@ -544,6 +532,183 @@
 
 ;; Cette fonction s'occupe des changements de scène, d'y appliquer les rules + moves nécessaires 
 (defun apply-change-scene (change state)
+  (case change
+    ;; Scénarios spécifiques
+    ((initialNode s1)
+     (progn
+       (rules 'red-riding-hood 'move nil 'wood state)
+       (rules 'wolf 'kill 'red-riding-hood 'wood state)))
+
+    ((initialNode s5)
+     (progn
+       (rules 'red-riding-hood 'move nil 'wood state)
+       (rules 'red-riding-hood 'greet 'granny state)))
+
+    ((initialNode s8)
+     (progn
+        (rules 'red-riding-hood 'move nil 'granny-home state)
+        (rules 'red-riding-hood 'give 'granny 'cake state)
+      ))
+
+    ((s8 outcome)
+     (progn
+       (rules 'red-riding-hood 'give 'granny nil state)
+       (format t "~%FIN HEUREUSE")))
+    ((s1 s2)
+     (rules 'red-riding-hood 'tell 'wolf 'wood state))
+
+    ((s1 s5)
+    (rules 'wolf 'eat 'red-riding-hood 'wood state))
+
+    ((s2 s3)
+     (progn
+       (rules 'wolf 'move nil 'granny-home state)
+       (rules 'wolf 'tell 'granny 'granny-home state)
+       (rules 'wolf 'eat 'granny 'granny-home state)))
+       
+    ((s3 island)
+     (format t "~%Fin Malheureuse"))
+
+    ((s3 s4)
+    (format t "~%Le loup prend se déguise comme granny et prend sa place."))
+
+    ((s3 s7)
+    (progn
+      (rules 'hunter 'move nil 'granny-home state)
+      (rules 'hunter 'tell 'wolf 'granny-home state)
+      (rules 'hunter 'kill 'wolf 'granny-home state)
+    ))
+
+    ((s4 s5)
+    (progn
+      (rules 'red-riding-hood 'move nil 'granny-home state)
+      (rules 'wolf 'tell 'red-riding-hood 'granny-home state)
+      (rules 'wolf 'eat 'red-riding-hood 'granny-home state)
+    ))
+
+    ((s4 s6)
+    (progn
+      (rules 'wolf 'move nil 'wood state)
+      (format t "~% Le loup fait une sieste dans la foret.")
+    ))
+
+    ((s4 s7)
+    (progn
+      (rules 'hunter 'move nil 'granny-home state)
+      (rules 'hunter 'tell 'wolf 'granny-home state)
+      (rules 'hunter 'kill 'wolf 'granny-home state)
+    ))
+
+    ((s5 s6)
+    (progn
+      (rules 'wolf 'move nil 'wood state)
+      (format t "~% Le loup fait une sieste dans la foret.")
+    ))
+
+    ((s5 s7)
+    (progn
+      (rules 'hunter 'move nil 'granny-home state)
+      (rules 'hunter 'tell 'wolf 'granny-home state)
+      (rules 'hunter 'kill 'wolf 'granny-home state)
+    ))
+
+    ((s5 island)
+     (format t "~%Fin Malheureuse"))
+
+    ((s6 s7)
+    (progn
+      (rules 'hunter 'move nil 'wood state)
+      (rules 'hunter 'tell 'wolf 'wood state)
+      (rules 'hunter 'kill 'wolf 'wood state)
+    ))
+
+    ((s7 s8)
+    (rules 'red-riding-hood 'give 'granny 'cake state)
+    )
+
+    ((s7 outcome)
+    (format t "~%Fin Heureuse!!"))
+    
+    ((s8 outcome)
+    (format t "~%Fin Heureuse!!"))
+    
+    (t
+     (format t "~%Changement non reconnu : ~A" change))
+     
+  ))
+#| 
+;;(apply-change-scene '(initialNode s1) *state*)
+;;(apply-change-scene '(initialNode s9) *state*)
+;;(apply-change-scene '(s1 s2) *state*)
+;;(apply-change-scene '(s1 s3) *state*)
+;;(apply-change-scene '(s3 s4) *state*)
+;;(apply-change-scene '(s3 s6) *state*)
+;;(apply-change-scene '(s4 s6) *state*)
+;;(apply-change-scene '(s4 outcome) *state*)
+;;(apply-change-scene '(s7 outcome) *state*)
+(apply-change-scene '(s5 island) *state*)
+(apply-change-scene '(s10 island) *state*)
+(apply-change-scene '(s9 island) *state*)
+|#
+;; fonction qui renvoie les successeurs valides d'un noeud du graphe de l'histoire
+(defun successeurs-valides (etat story chemin)
+  (let ((succ (cdr (assoc etat story))))  ; Obtenir les successeurs de l'état actuel dans l'histoire
+    (dolist (x succ succ)
+      (if (member x chemin)                  ; Vérifie si l'état a déjà été visité
+          (setq succ (remove x succ))))))    ; Supprime les états déjà visités de la liste des successeurs
+
+
+(successeurs-valides 's1 *story* '(initialNode s2))
+
+;; Code NON TESTE
+(defun generate_scenario (etat sortie story state &optional (scenario nil))
+ (format t "~%========= Exploration de l'état : ~s =========" etat)
+ (format t "Chemin actuel : ~s" (reverse (cons etat scenario)))
+ (format t "~%État du monde actuel : ~s" state)
+ ;; Condition d'arrêt : si l'état actuel est l'objectif
+ (if (equal etat sortie)
+ (progn
+ (format t "~%Scénario complet trouvé : ~s" (reverse (cons etat scenario)))
+ (reverse (cons etat scenario))) ; Retourne le scénario atteint
+ ;; Exploration récursive en profondeur
+ (let ((successeurs (successeursValides etat story scenario)))
+ (if (null successeurs)
+ (progn
+ (format t "~%Impasse à l'état ~s, retour en arrière..." etat)
+ nil) ; Retourne NIL si aucun successeur valide
+ ;; Exploration de chaque successeur
+ (dolist (succ successeurs)
+ (format t "~%De ~s je vais en ~s" etat succ) ; Affiche la transition
+ (let ((nouvel-etat-monde (copy-list state))) ; Copie de l'état du monde
+ ;; Applique les changements de scène pour cette transition
+ (apply-change-scene `(,etat ,succ) nouvel-etat-monde)
+ ;; Appel récursif pour explorer le successeur
+ (let ((result (generate_scenario succ sortie story nouvel-etat-monde (cons etat scenario))))
+ (when result ; Retourne le premier chemin réussi trouvé
+ (return result)))))))))
+
+
+(generate_scenario 'initialNode 'outcome *story* *state*)
+
+;; Graphe de l'histoire dans la partie créative à enrichir 
+(defvar *creative_story* '((initialNode s1 s9)
+              (s1 s2 s3)
+              (s2 s5)
+              (s3 s4 s6)
+              (s4 s6 outcome)
+              (s5 s8 s10 island)
+              (s6 s7 s10)
+              (s7 s10 outcome)
+              (s8 s9 s11)
+              (s9 s10 island)
+              (s10 s11 island)
+              (s11 s12 outcome)
+              (s12 outcome)
+              (island)
+              (outcome)
+              ))
+
+(defun creative-apply-change-scene (change state)
   (cond
     ((equal change '(initialNode s1))
       (progn 
@@ -665,58 +830,4 @@
     )
   )
 )
-#| 
-;;(apply-change-scene '(initialNode s1) *state*)
-;;(apply-change-scene '(initialNode s9) *state*)
-;;(apply-change-scene '(s1 s2) *state*)
-;;(apply-change-scene '(s1 s3) *state*)
-;;(apply-change-scene '(s3 s4) *state*)
-;;(apply-change-scene '(s3 s6) *state*)
-;;(apply-change-scene '(s4 s6) *state*)
-;;(apply-change-scene '(s4 outcome) *state*)
-;;(apply-change-scene '(s7 outcome) *state*)
-(apply-change-scene '(s5 island) *state*)
-(apply-change-scene '(s10 island) *state*)
-(apply-change-scene '(s9 island) *state*)
-|#
-;; fonction qui renvoie les successeurs valides d'un noeud du graphe de l'histoire
-(defun successeursValides (etat story chemin)
-  (let ((succ (cdr (assoc etat story))))  ; Obtenir les successeurs de l'état actuel dans l'histoire
-    (dolist (x succ succ)
-      (if (member x chemin)                  ; Vérifie si l'état a déjà été visité
-          (setq succ (remove x succ))))))    ; Supprime les états déjà visités de la liste des successeurs
-
-
-(successeursValides 's1 *story* '(initialNode s2))
-
-;; Code NON TESTE
-(defun generate_scenario (etat sortie story state &optional (scenario nil))
- (format t "~%========= Exploration de l'état : ~s =========" etat)
- (format t "Chemin actuel : ~s" (reverse (cons etat scenario)))
- (format t "~%État du monde actuel : ~s" state)
- ;; Condition d'arrêt : si l'état actuel est l'objectif
- (if (equal etat sortie)
- (progn
- (format t "~%Scénario complet trouvé : ~s" (reverse (cons etat scenario)))
- (reverse (cons etat scenario))) ; Retourne le scénario atteint
- ;; Exploration récursive en profondeur
- (let ((successeurs (successeursValides etat story scenario)))
- (if (null successeurs)
- (progn
- (format t "~%Impasse à l'état ~s, retour en arrière..." etat)
- nil) ; Retourne NIL si aucun successeur valide
- ;; Exploration de chaque successeur
- (dolist (succ successeurs)
- (format t "~%De ~s je vais en ~s" etat succ) ; Affiche la transition
- (let ((nouvel-etat-monde (copy-list state))) ; Copie de l'état du monde
- ;; Applique les changements de scène pour cette transition
- (apply-change-scene `(,etat ,succ) nouvel-etat-monde)
- ;; Appel récursif pour explorer le successeur
- (let ((result (generate_scenario succ sortie story nouvel-etat-monde (cons etat scenario))))
- (when result ; Retourne le premier chemin réussi trouvé
- (return result)))))))))
-
-
-(generate_scenario 'initialNode 'outcome *story* *state*)
-
  

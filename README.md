@@ -382,7 +382,7 @@ Elle gère les dialogues, les déplacments et les actions des personnages de man
 
 Voici le code de la fonction successeursValides :
 ```lisp
-(defun successeursValides (etat story chemin)
+(defun successeurs-valides (etat story chemin)
   (let ((succ (cdr (assoc etat story))))  ; Obtenir les successeurs de l'état actuel dans l'histoire
     (dolist (x succ succ)
       (if (member x chemin)                  ; Vérifie si l'état a déjà été visité

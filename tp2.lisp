@@ -215,27 +215,20 @@
       ((and (eq from 'initialNode) (eq to 's1))
        (progn
          (rules 'red-riding-hood 'move nil 'wood state)
-         (rules 'wolf 'kill 'red-riding-hood 'wood state)
+         (rules 'red-riding-hood 'greet 'wolf 'wood state)
          state))
       
       ((and (eq from 'initialNode) (eq to 's5))
        (progn
          (rules 'red-riding-hood 'move nil 'wood state)
-         (rules 'red-riding-hood 'greet 'granny state)
+         (rules 'wolf 'eat 'red-riding-hood state)
          state))
       
       ((and (eq from 'initialNode) (eq to 's8))
        (progn
-         (rules 'red-riding-hood 'move nil 'wood state)
          (rules 'red-riding-hood 'move nil 'granny-home state)
-         (rules 'red-riding-hood 'give 'granny 'cake state)
-         state))
-      
-      ;; Autres transitions
-      ((and (eq from 's8) (eq to 'outcome))
-       (progn
-         (rules 'red-riding-hood 'give 'granny nil state)
-         (format t "~%FIN HEUREUSE")
+         (rules 'red-riding-hood 'greet 'granny 'granny-home state)
+         (rules 'red-riding-hood 'give 'granny 'granny-home state)
          state))
       
       ((and (eq from 's1) (eq to 's2))
@@ -262,7 +255,7 @@
       
       ((and (eq from 's3) (eq to 's4))
       (progn
-       (format t "~%Le loup prend se déguise comme granny et prend sa place.")
+       (format t "~%Le loup se déguise en mère-grand pour duper le petit chaperon rouge.")
        state))
       
       ((and (eq from 's3) (eq to 's7))
@@ -282,7 +275,6 @@
       ((and (eq from 's4) (eq to 's6))
        (progn
          (rules 'wolf 'move nil 'wood state)
-         (format t "~% Le loup fait une sieste dans la foret.")
          state))
       
       ((and (eq from 's4) (eq to 's7))
@@ -295,7 +287,6 @@
       ((and (eq from 's5) (eq to 's6))
        (progn
          (rules 'wolf 'move nil 'wood state)
-         (format t "~% Le loup fait une sieste dans la foret.")
          state))
       
       ((and (eq from 's5) (eq to 's7))
@@ -319,7 +310,7 @@
       
       ((and (eq from 's7) (eq to 's8))
        (progn
-         (rules 'red-riding-hood 'give 'granny 'cake state)
+         (rules 'red-riding-hood 'give 'granny 'wood state)
          state))
       
       ((and (eq from 's7) (eq to 'outcome))

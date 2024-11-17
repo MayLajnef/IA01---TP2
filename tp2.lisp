@@ -102,7 +102,7 @@
       (cond
         ((equal actor 'red-riding-hood) 
          (when (equal cc 'granny-home) (format t "~%*Le Petit Chaperon Rouge sautille gaiement vers la maison de mère-grand*"))
-         (when (equal cc 'granny-home) (format t "~%*D'humeur aventureuse, le Petit Chaperon Rouge passe par les bois pour se rendre chez mère-grand.*"))
+         (when (equal cc 'wood) (format t "~%*D'humeur aventureuse, le Petit Chaperon Rouge passe par les bois pour se rendre chez mère-grand.*"))
          (format t "~%Petit Chaperon Rouge: *chantonne* \"La la la...\""))
         ((equal actor 'wolf)
          (when (equal cc 'granny-home) (format t "~%*Le loup se faufile silencieusement vers dans la maison de mère-grand*"))
@@ -361,27 +361,53 @@
         (format t "~%Copie de l'état: ~s" previous_state)
         (format t "~%Successeurs valides: ~s" successeurs)
         
-        (loop while (and successeurs (not solution))
-              do (let ((current-successor (car successeurs)))
-                   (format t "~%Tentative transition de ~s vers ~s" etat current-successor)
-                   
-                   (let ((new-state (apply-change-scene 
-                                   (list etat current-successor) 
-                                   previous_state)))
-                     
-                     (if new-state
-                         (progn
-                           (format t "~%Nouvel état calculé: ~s" new-state)
-                           (setf state new-state)
-                           (setf solution (generate_scenario current-successor sortie story state scenario)))
-                         (format t "~%ERREUR: apply-change-scene a retourné NIL")) ; Log de débogage
-                     
-                     (when (or (not solution) (equal etat 'island))
-                       (setf state previous_state)
-                       (format t "~%Impasse ! De ~s je retourne à ~s " etat (pop successeurs))))))
-        solution)))
+        (loop while (and successeurs (not solution)) do 
 
-(generate_scenario 'initialNode 'outcome *story* *state*)
+          (if (not (equal (car successeurs) 'island)) 
+            (progn
+              (let ((current-successor (car successeurs)))
+              (format t "~%Tentative transition de ~s vers ~s" etat current-successor)
+            
+              (let ((new-state (apply-change-scene 
+                            (list etat current-successor) 
+                            previous_state)))
+              
+              (if new-state
+                  (progn
+                    (format t "~%Nouvel état calculé: ~s" new-state)
+                    (setf state new-state)
+                    (setf solution (generate_scenario current-successor sortie story state scenario)))
+                  (format t "~%ERREUR: apply-change-scene a retourné NIL")) ; Log de débogage
+              )))
+            (progn
+              (setf state previous_state)
+              (format t "~%Impasse ! De ~s je retourne à ~s " (pop successeurs) etat)
+            )
+          )
+        )
+      solution)))
+
+;; Test basique
+;; (generate_scenario 'initialNode 'outcome *story* *state*)
+
+;; Tests avec des variations de l'histoire
+(defvar *test-story* '((initialNode s5 s1)
+              (s1 s2 s5)
+              (s2 s3)
+              (s3 island s4 s7)
+              (s4 s5 s6 s7)
+              (s5 island s6 s7)
+              (s6 s7)
+              (s7 outcome)
+              (island)
+              (outcome)
+              ))
+(defvar *test-state* '((red-riding-hood (alive t) (place wood)) 
+               (wolf (alive t) (place wood)) 
+               (granny (alive t) (place granny-home))
+               (hunter (alive t) (place hunter-home))))
+
+(generate_scenario 's1 'outcome *test-story* *test-state*)
  
 ;; PARTIE CREATIVE
 ;; Graphe de l'histoire optimisé et enrichi

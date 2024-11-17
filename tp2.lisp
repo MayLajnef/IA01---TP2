@@ -412,3 +412,4 @@
               )
  ; (defun creative-rules (actor action &optional person cc state) ...)
  ; (defun creatively-apply-change-scene (change state) ...)
+ ; (defun interactive-story-generator (etat sortie story state &optional (scenario nil)) ...)

@@ -188,8 +188,7 @@
         ;; Dialogue par défaut
         (t (format t "~%*Une conversation s'engage entre ~a et ~a dans le lieu ~a.*" actor person cc))))
     
-    (t (format t "~%Erreur : l'action ~a est inconnue." action))))
-
+    (otherwise (format t "~%Erreur : l'action ~a est inconnue." action))))
 ;;*state*
 ;;(rules 'hunter 'kill 'wolf 'granny-home *state*)
 ;;*state*
@@ -340,8 +339,10 @@
 
 ;; fonction qui renvoie les successeurs valides d'un noeud du graphe de l'histoire
 (defun successeurs-valides (etat story chemin)
-  (let ((succ (cdr (assoc etat story))))  
-    (remove-if (lambda (x) (member x chemin)) succ)))  
+  (let ((succ (cdr (assoc etat story))))  ; Obtenir les successeurs de l'état actuel dans l'histoire
+    (dolist (x succ succ)
+      (if (member x chemin)                  ; Vérifie si l'état a déjà été visité
+          (setq succ (remove x succ))))))    ; Supprime les états déjà visités de la liste des successeurs 
 
 (successeurs-valides 's1 *story* '(initialNode s2))
 
@@ -391,3 +392,23 @@
 
 (generate_scenario 'initialNode 'outcome *story* *state*)
  
+;; PARTIE CREATIVE
+;; Graphe de l'histoire optimisé et enrichi
+(defvar *creative-story* '((initialNode s1 s9)
+              (s1 s2 s3)
+              (s2 s5)
+              (s3 s4 s6)
+              (s4 s6 outcome)
+              (s5 s8 s10 island)
+              (s6 s7 s10)
+              (s7 s10 outcome)
+              (s8 s9 s11)
+              (s9 s10 island)
+              (s10 s11 island)
+              (s11 s12 outcome)
+              (s12 outcome)
+              (island)
+              (outcome)
+              )
+ ; (defun creative-rules (actor action &optional person cc state) ...)
+ ; (defun creatively-apply-change-scene (change state) ...)

@@ -500,7 +500,7 @@ Voici le code de la fonction generate_scenario :
 )
 ```
 
-Le test de cette fonction renvoie toujours la même solution : 
+Le test de cette fonction avec le neoud initial renvoie toujours la même solution : 
 ```lisp
 (generate_scenario 'initialNode 'outcome *story* *state*)
 ```

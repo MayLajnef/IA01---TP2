@@ -397,9 +397,9 @@ Lors de l'appel de cette fonction les paramètres doivent être de la forme:
 
 ### Génération du scénario 
 
-#### Fonction successeursValides
+#### Fonction successeurs-valides
 
-Voici le code de la fonction successeursValides :
+Voici le code de la fonction successeurs-valides :
 ```lisp
 (defun successeurs-valides (etat story chemin)
   (let ((succ (cdr (assoc etat story))))  ; Obtenir les successeurs de l'état actuel dans l'histoire
@@ -432,30 +432,72 @@ Voici le code de la fonction generate_scenario :
 
 ```lisp
 (defun generate_scenario (etat sortie story state &optional (scenario nil))
- (format t "~%========= Exploration de l'état : ~s =========" etat)
- (format t "Chemin actuel : ~s" (reverse (cons etat scenario)))
- (format t "~%État du monde actuel : ~s" state)
- ;; Condition d'arrêt : si l'état actuel est l'objectif
- (if (equal etat sortie)
- (progn
- (format t "~%Scénario complet trouvé : ~s" (reverse (cons etat scenario)))
- (reverse (cons etat scenario))) ; Retourne le scénario atteint
- ;; Exploration récursive en profondeur
- (let ((successeurs (successeursValides etat story scenario)))
- (if (null successeurs)
- (progn
- (format t "~%Impasse à l'état ~s, retour en arrière..." etat)
- nil) ; Retourne NIL si aucun successeur valide
- ;; Exploration de chaque successeur
- (dolist (succ successeurs)
- (format t "~%De ~s je vais en ~s" etat succ) ; Affiche la transition
- (let ((nouvel-etat-monde (copy-list state))) ; Copie de l'état du monde
- ;; Applique les changements de scène pour cette transition
- (apply-change-scene `(,etat ,succ) nouvel-etat-monde)
- ;; Appel récursif pour explorer le successeur
- (let ((result (generate_scenario succ sortie story nouvel-etat-monde (cons etat scenario))))
- (when result ; Retourne le premier chemin réussi trouvé
- (return result)))))))))
+   ; Fonction de génération de scénario avec exploration récursive
+   ; Paramètres :
+   ; - etat : l'état courant dans l'exploration
+   ; - sortie : l'état final à atteindre
+   ; - story : graphe des transitions possibles entre états/scènes
+   ; - state : état mutable du système à chaque étape
+   ; - scenario : liste optionnelle des états déjà parcourus
+
+   ; Affichage qui permet de tracer l'exploration en cours
+   (format t "~%========= Explore =========~%Etat ~s state : ~s" etat state)
+   
+   ; Ajoute l'état courant au scénario sans dupliquer
+   (pushnew etat scenario)
+   
+    ; Condition de terminaison : si état courant = état de sortie, 
+    ; renvoie le scénario complet (inversé pour respecter l'ordre)
+   (if (equal etat sortie)
+      (progn
+        (format t "~%Scénario complet trouvé ! ")
+        (reverse scenario)
+      )
+       
+       (let* ((solution nil)
+              (successeurs (successeurs-valides etat story scenario)) ; Liste des successeurs valides de l'état actuel
+              (previous_state (deep-copy-alist state))) ; Copie de l'état donné en argument en vue de le modifier et/ou restaurer
+         
+         ; Boucle de recherche de solution par exploration des successeurs
+         (loop while (and successeurs (not solution)) do
+            (if (not (equal (car successeurs) 'island))
+                ; Si l'état courant n'est pas une impasse
+                (progn
+                  (let ((current-successor (car successeurs)))
+                  (format t "~%De ~s je vais en ~s" etat current-successor)
+
+                  ; Calcule le nouvel état après transition
+                  (let ((new-state (apply-change-scene 
+                            (list etat current-successor) 
+                            previous_state)))
+
+                      
+                  (if new-state
+                      (progn
+                        ; Met à jour l'état courant
+                        (setf state new-state)
+                        ; Appel récursif pour continuer l'exploration
+                        (setf solution 
+                            (generate_scenario 
+                            current-successor 
+                            sortie 
+                            story 
+                            state 
+                            scenario)))
+                          (error "Erreur ! Impossible d'atteindre l'état souhaité !")
+                      ))))
+                ; Sinon, on gère l'impasse
+                (progn
+                  ; Restaure l'état précédent
+                  (setf state previous_state)
+                  (format t "~%Impasse ! De ~s je retourne à ~s " (pop successeurs) etat)
+                )
+            )
+         )
+         solution
+       )
+   )
+)
 ```
 
 Le test de cette fonction renvoie toujours la même solution : 

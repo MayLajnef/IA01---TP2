@@ -504,7 +504,7 @@ Le test de cette fonction avec le neoud initial renvoie toujours la même soluti
 ```lisp
 (generate_scenario 'initialNode 'outcome *story* *state*)
 ```
-![Résultat du test](https://github.com/MayLajnef/IA01---TP2/blob/main/Tests/test%20generate%20scenario.png?raw=true)
+![Résultat du test](https://raw.githubusercontent.com/MayLajnef/IA01---TP2/refs/heads/main/Tests/test_basique_generate_scenario.png)
 
 Lors de l'appel de cette fonction on doit lui passer en paramètre:
   - etat : l'état de départ de l'histoire

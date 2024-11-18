@@ -414,16 +414,16 @@ etat : noeud du graphe dont on cherche les successeurs valides, les valeurs de e
 story : graphe de l'histoire sous forme de liste associative de la forme ((noeud1 . <successeurs_noeud1>) (noeud2 . <successeurs_noeud2>) ...)
 chemin : chemin parcouru dans le noeud graphe soit une suite de noeuds déjà visités à enlever de la liste des successeurs afin d'obtenir les succeseurs valides
 
-Exemple de test :
+Exemples de tests :
 ```lisp
-(successeursValides 's1 *story* '(initialNode s2))
+(successeurs-valides 's1 *story* '(initialNode s2))
 ```
-![Résultat du test](https://raw.githubusercontent.com/MayLajnef/IA01---TP2/refs/heads/main/Tests/output_test1_successeurs-valides.png)
+![Résultat du test 1](https://raw.githubusercontent.com/MayLajnef/IA01---TP2/refs/heads/main/Tests/output_test1_successeurs-valides.png)1
 
 ```lisp
- (successeursValides 's4 *story* '(initialNode s1 s2 s3 s5))
+ (successeurs-valides 's4 *story* '(initialNode s1 s2 s3 s5))
 ```
-![Résultat du test](https://img.jpg)
+![Résultat du test 2](https://raw.githubusercontent.com/MayLajnef/IA01---TP2/refs/heads/main/Tests/output_test2_successeurs-valides.png)
 
 
 #### Fonction generate_scenario

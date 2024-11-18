@@ -427,7 +427,7 @@ Exemples de tests :
 
 
 #### Fonction generate_scenario
-
+##### Fonction deep-copy-alist
 La fonction generate_scenario utilise la fonction annexe deep-copy-alist. Cette fonction sert à faire une copie complète de la liste associative de propriétés de personnages réprésentant l'état du monde actuel, on appelle cette liste associative une "association list" ou "alist" en Lisp.
 Voici le code de la fonction deep-copy-alist :
 ```lisp

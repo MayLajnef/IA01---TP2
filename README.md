@@ -407,13 +407,18 @@ Voici le code de la fonction successeursValides :
       (if (member x chemin)                  ; Vérifie si l'état a déjà été visité
           (setq succ (remove x succ))))))    ; Supprime les états déjà visités de la liste des successeurs
 ```
-Cette fonction permet de renvoyer les successeurs valides d'un noeud du graphe de l'histoire, c'est à dire tous ceux qui ne sont pas dans le chemin parcouru mis en argument. 
+Cette fonction permet de renvoyer les successeurs valides d'un noeud du graphe de l'histoire, c'est à dire tous les successeurs qui ne sont pas dans le chemin parcouru mis en argument. 
+Lors de l'appel de cette fonction dans notre programme, les paramètres sont de la forme suivante:
 
-Exemples de tests et leurs outputs :
+etat : noeud du graphe dont on cherche les successeurs valides, les valeurs de etat se trouvent dans {initialNode, outcome, island, s1, s2, etc.}
+story : graphe de l'histoire sous forme de liste associative de la forme ((noeud1 . <successeurs_noeud1>) (noeud2 . <successeurs_noeud2>) ...)
+chemin : chemin parcouru dans le noeud graphe soit une suite de noeuds déjà visités à enlever de la liste des successeurs afin d'obtenir les succeseurs valides
+
+Exemple de test :
 ```lisp
 (successeursValides 's1 *story* '(initialNode s2))
 ```
-![Résultat du test](https://img.jpg)
+![Résultat du test](https://raw.githubusercontent.com/MayLajnef/IA01---TP2/refs/heads/main/Tests/output_test1_successeurs-valides.png)
 
 ```lisp
  (successeursValides 's4 *story* '(initialNode s1 s2 s3 s5))

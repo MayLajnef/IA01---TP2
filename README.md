@@ -86,6 +86,12 @@ Concernant l'algorithme de cette fonction, il n'y a rien de notable qui mérite 
 
 La seule particularité de cette fonction est le changement de la localisation du personnage mangé par le loup à "wolf-belly". 
 
+Pour utiliser cette fonciton les paramètres doivent d'être de la forme:
+  - person : le nom d'un personnage, dans notre histoire il est parmis {red-riding-hood, wolf, granny, hunter}
+  - effect : l'effet a appliquer, c'est une valeur parmis {eaten, killed, risen, moved}
+  - value : valeur que doit prendre le personnage dans l'état de l'histoire
+  - state : la variable contenant tous les états des personnages de l'histoire
+
 #### 2. Fonction rules
 
 Voici le code de la fonction rules :
@@ -244,137 +250,150 @@ Cette fonction a pour but de définir les règles de passages entre les différe
 
 Cette fonction applique également les bons effets en fonction des prémisses valides.
 
+Lors de l'appel de cette fonction dans notre programme, les paramètres sont de la forme suivante:
+  - actor : acteur de l'action, dans notre histoire cette valeur se trouve parmis {granny, wolf, red-riding-hood, hunter}
+  - action : l'action a appliquer, dans notre histoire cette valeur se trouve parmis {moove, greet, kill, tell, give, eat}
+  - person : personnage auquel on parle ou sur lequel se déroule l'action, dans notre histoire cette valeur se trouve parmis {granny, wolf, red-riding-hood, hunter}
+  - cc : le lieu où se déroule l'action, dans notre histoire cela comprends {granny-home, wood}
+  - state : variable comprenant l'état actuel de tous les personnages de l'histoire
+
 #### 3. Fonction apply-change-scene
 
 Voici le code de la fonction apply-change-scene :
 
 ```lisp
 (defun apply-change-scene (change state)
-  (cond
-    ((equal change '(initialNode s1))
-      (progn 
-        (rules 'red-riding-hood 'move nil 'wood state)
-        (rules 'red-riding-hood 'greet 'wolf 'wood state)
-      )
-    )
-    ((equal change '(initialNode s9))
-      (progn 
-        (rules 'red-riding-hood 'move nil 'wood state)
-        (rules 'red-riding-hood 'greet 'wolf state)
-        (rules 'wolf 'eat 'red-riding-hood 'wood state)
-      )
-    )
-    ((equal change '(s1 s2))
-      (progn 
-        (rules 'red-riding-hood 'tell 'wolf 'wood state)
+  (unless state
+    (error "L'état est NIL, impossible d'appliquer le changement."))
   
-      )
-    )
-    ((equal change '(s1 s3))
-      (progn 
-        (rules 'red-riding-hood 'move nil 'granny-home state)
-        (rules 'red-riding-hood 'greet 'granny 'granny-home state)
-      )
-    )
-    ((equal change '(s2 s5))
+  (let ((from (first change))
+        (to (second change)))
+    
+    (cond
+      ;; Scénarios depuis initialNode
+      ((and (eq from 'initialNode) (eq to 's1))
+       (progn
+         (rules 'red-riding-hood 'move nil 'wood state)
+         (rules 'red-riding-hood 'greet 'wolf 'wood state)
+         state))
+      
+      ((and (eq from 'initialNode) (eq to 's5))
+       (progn
+         (rules 'red-riding-hood 'move nil 'wood state)
+         (rules 'wolf 'eat 'red-riding-hood state)
+         state))
+      
+      ((and (eq from 'initialNode) (eq to 's8))
+       (progn
+         (rules 'red-riding-hood 'move nil 'granny-home state)
+         (rules 'red-riding-hood 'greet 'granny 'granny-home state)
+         (rules 'red-riding-hood 'give 'granny 'granny-home state)
+         state))
+      
+      ((and (eq from 's1) (eq to 's2))
+       (progn
+         (rules 'red-riding-hood 'tell 'wolf 'wood state)
+         state))
+      
+      ((and (eq from 's1) (eq to 's5))
+       (progn
+         (rules 'wolf 'eat 'red-riding-hood 'wood state)
+         state))
+      
+      ((and (eq from 's2) (eq to 's3))
+       (progn
+         (rules 'wolf 'move nil 'granny-home state)
+         (rules 'wolf 'tell 'granny 'granny-home state)
+         (rules 'wolf 'eat 'granny 'granny-home state)
+         state))
+      
+      ((and (eq from 's3) (eq to 'island))
       (progn
-        (rules 'wolf 'move nil 'granny-home state)
-        (rules 'wolf 'tell 'granny 'granny-home state)
-        (rules 'wolf 'eat 'granny 'granny-home state)
-      )
-    )
-    ((equal change '(s3 s4))
+       (format t "~%Fin Malheureuse")
+       state))
+      
+      ((and (eq from 's3) (eq to 's4))
       (progn
-        (rules 'red-riding-hood 'give 'granny 'granny-home state)
-      )
-    )
-    ((equal change '(s3 s6))
+       (format t "~%Le loup se déguise en mère-grand pour duper le petit chaperon rouge.")
+       state))
+      
+      ((and (eq from 's3) (eq to 's7))
+       (progn
+         (rules 'hunter 'move nil 'granny-home state)
+         (rules 'hunter 'tell 'wolf 'granny-home state)
+         (rules 'hunter 'kill 'wolf 'granny-home state)
+         state))
+      
+      ((and (eq from 's4) (eq to 's5))
+       (progn
+         (rules 'red-riding-hood 'move nil 'granny-home state)
+         (rules 'wolf 'tell 'red-riding-hood 'granny-home state)
+         (rules 'wolf 'eat 'red-riding-hood 'granny-home state)
+         state))
+      
+      ((and (eq from 's4) (eq to 's6))
+       (progn
+         (rules 'wolf 'move nil 'wood state)
+         state))
+      
+      ((and (eq from 's4) (eq to 's7))
+       (progn
+         (rules 'hunter 'move nil 'granny-home state)
+         (rules 'hunter 'tell 'wolf 'granny-home state)
+         (rules 'hunter 'kill 'wolf 'granny-home state)
+         state))
+      
+      ((and (eq from 's5) (eq to 's6))
+       (progn
+         (rules 'wolf 'move nil 'wood state)
+         state))
+      
+      ((and (eq from 's5) (eq to 's7))
+       (progn
+         (rules 'hunter 'move nil 'granny-home state)
+         (rules 'hunter 'tell 'wolf 'granny-home state)
+         (rules 'hunter 'kill 'wolf 'granny-home state)
+         state))
+      
+      ((and (eq from 's5) (eq to 'island))
       (progn
-        (rules 'wolf 'move nil 'granny-home state)
-      )
-    )
-    ((equal change '(s4 s6))
-      (progn
-        (rules 'wolf 'move nil 'granny-home state)
-      )
-    )
-    ((equal change '(s5 s8))
-      (progn
-        (rules 'wolf 'tell nil 'granny-home state)
-      )
-    )
-    ((equal change '(s5 s10))
-      (progn
-        (rules 'hunter 'move nil 'granny-home state)
-        (rules 'hunter 'tell 'wolf 'granny-home state)
-        (rules 'hunter 'kill 'wolf 'granny-home state)
-      )
-    )
-    ((equal change '(s6 s10))
-      (progn
-        (rules 'wolf 'eat 'red-riding-hood 'granny-home state)
-        (rules 'wolf 'eat 'granny 'granny-home state)
-      )
-    )
-    ((equal change '(s7 s10))
-      (progn
-        (rules 'wolf 'move nil 'wood state)
-        (rules 'wolf 'eat 'red-riding-hood 'wood state)
-        (rules 'wolf 'eat 'granny 'wood state)
-      )
-    )
-    ((equal change '(s8 s9))
-      (progn
-        (rules 'red-riding-hood 'move nil 'granny-home state)
-        (rules 'wolf 'tell 'red-riding-hood 'granny-home state)
-        (rules 'wolf 'eat 'red-riding-hood 'granny-home state)
-      )
-    )
-    ((equal change '(s8 s11))
-      (progn
-        (rules 'hunter 'move nil 'granny-home state)
-        (rules 'hunter 'tell 'wolf 'granny-home state)
-        (rules 'hunter 'kill 'wolf 'granny-home state)
-      )
-    )
-    ((equal change '(s9 s10))
-      (progn
-        (rules 'wolf 'move nil 'wood state)
-      )
-    )
-    ((equal change '(s10 s11))
-      (progn
-        (rules 'hunter 'move nil 'wood state)
-        (rules 'hunter 'tell 'wolf 'wood state)
-        (rules 'hunter 'kill 'wolf 'wood state)
-      )
-    )
-    ((equal change '(s11 s12))
-      (progn
-        (rules 'red-riding-hood 'give 'granny nil state)
-      )
-    )
-    ((or (equal change '(s4 outcome)) (equal change '(s7 outcome)))
-      (progn
-        (format t "~%FIN HEUREUSE\"")
-      )
-    )
-    ((equal change '(s12 outcome))
-      (progn
-        (rules 'red-riding-hood 'tell 'granny nil state)
-      )
-    )
-    ((or (or (equal change '(s10 island)) (equal change '(s9 island))) (equal change '(s5 island)))
-      (progn 
-        (format t "~%FIN MALHEUREUSE\"")
-      )
-    )
-  )
-)
+        (format t "~%Fin Malheureuse")
+        state))
+      
+      ((and (eq from 's6) (eq to 's7))
+       (progn
+         (rules 'hunter 'move nil 'wood state)
+         (rules 'hunter 'tell 'wolf 'wood state)
+         (rules 'hunter 'kill 'wolf 'wood state)
+         state))
+      
+      ((and (eq from 's7) (eq to 's8))
+       (progn
+         (rules 'red-riding-hood 'give 'granny 'wood state)
+         state))
+      
+      ((and (eq from 's7) (eq to 'outcome))
+       (progn
+       (format t "~%Fin Heureuse!!")
+       state))
+      
+      ((and (eq from 's8) (eq to 'outcome))
+       (progn
+       (format t "~%Fin Heureuse!!")
+       state))
+      
+      (t
+       (progn
+       (format t "~%Changement non reconnu : ~A" change)
+       nil)))))
 ```
 
 Cette fonction a pour but de faire appliquer les bonnes règles lors des changements d'états (passages d'une scène à une autre) de l'histoire.
 Elle gère les dialogues, les déplacments et les actions des personnages de manière cohérente.
+
+Lors de l'appel de cette fonction les paramètres doivent être de la forme:
+  - change : (étatDépart étatArrivée) : ce paramètre doit être un tuple comprenant en premier élément l'état de départ et en second élément l'état désiré après l'application des règles
+  - state : variables d'état des personnages de l'histoire pour que l'on puisse faire les changements adéquats sur l'état des personnages en fonction des changements d'état
 
 ### Génération du scénario 
 
@@ -440,10 +459,17 @@ Le test de cette fonction renvoie toujours la même solution :
 ```
 ![Résultat du test](https://github.com/MayLajnef/IA01---TP2/blob/main/Tests/test%20generate%20scenario.png?raw=true)
 
-
+Lors de l'appel de cette fonction on doit lui passer en paramètre:
+  - etat : l'état de départ de l'histoire
+  - sortie : l'état de sortie souhaité
+  - story : le graphe de l'histoire sur lequel on choisit de générer l'histoire
+  - state : l'état des personnages de l'histoire
 
 ## Partie créative
 
+Dans cette partie créative, nous avons choisit dans un premier temps d'enrichir quelques peut le graphe de l'histoire et par conséquent les différents dialogue présent dans celle-ci. Voici donc le nouveau graphe de l'histoire :
+
+Insérer le graphe de la nouvelle histoire
 
 ## Conclusion
 

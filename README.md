@@ -428,8 +428,23 @@ Exemples de tests :
 
 #### Fonction generate_scenario
 
-Voici le code de la fonction generate_scenario :
+La fonction generate_scenario utilise la fonction annexe deep-copy-alist. Cette fonction sert à faire une copie complète de la liste associative de propriétés de personnages réprésentant l'état du monde actuel, on appelle cette liste associative une "association list" ou "alist" en Lisp.
+Voici le code de la fonction deep-copy-alist :
+```lisp
+(defun deep-copy-alist (alist)
+  ;; Crée une copie profonde d'une aliste avec des propriétés imbriquées.
+  ;; Exemple: ((character1 (prop1 val1) (prop2 val2)) (character2 (prop1 val1)))
+  (mapcar #'(lambda (character-entry)
+              (cons (car character-entry)  ; nom du personnage
+                    (mapcar #'(lambda (property)
+                              (copy-list property))  ; copie chaque propriété
+                           (cdr character-entry))))
+          alist))
+```
+La fonction va prendre chaque personnage un par un et copier la liste de toutes ses propriétés (comme alive et place) avec leurs valeurs dans la liste à copier donnée en argument. La fonction deep-copy-alist crée donc une nouvelle liste avec les copies de toutes les informations.
+L'intérêt de l'implémentation de cette fonction est que cela nous permet d'obtenir une copie qui est "profonde", c'est-à-dire que si on modifie quelque chose dans la copie (par exemple la localisation de wolf), cela ne changera pas la liste originale. 
 
+Voici le code de la fonction generate_scenario :
 ```lisp
 (defun generate_scenario (etat sortie story state &optional (scenario nil))
    ; Fonction de génération de scénario avec exploration récursive
@@ -469,9 +484,7 @@ Voici le code de la fonction generate_scenario :
                   ; Calcule le nouvel état après transition
                   (let ((new-state (apply-change-scene 
                             (list etat current-successor) 
-                            previous_state)))
-
-                      
+                            previous_state)))  
                   (if new-state
                       (progn
                         ; Met à jour l'état courant
@@ -499,7 +512,7 @@ Voici le code de la fonction generate_scenario :
    )
 )
 ```
-
+La fonction generate_scenario implémente une stratégie de recherche en profondeur avec backtracking pour trouver un chemin valide entre un état initial et un état de sortie.
 Le test de cette fonction avec le neoud initial renvoie toujours la même solution : 
 ```lisp
 (generate_scenario 'initialNode 'outcome *story* *state*)

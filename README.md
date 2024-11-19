@@ -527,9 +527,15 @@ Lors de l'appel de cette fonction on doit lui passer en paramètre:
 
 ## Partie créative
 
-Dans cette partie créative, nous avons choisit dans un premier temps d'enrichir quelques peut le graphe de l'histoire et par conséquent les différents dialogue présent dans celle-ci. Voici donc le nouveau graphe de l'histoire :
+Dans cette partie créative, nous avons choisi dans un premier temps d'enrichir quelques peu le graphe de l'histoire et par conséquent les différents dialogue présents dans la fonction rules. Voici donc les prompts utilisés pour enrichir le graphe de l'histoire :
+<prompts>
+On obtient une version plus riche et créative du graphe de l'histoire du **Petit Chaperon Rouge**, intégrant de nombreuses nouvelles scènes et transitions, avec des twists narratifs.
 
-Insérer le graphe de la nouvelle histoire
+
+
+
+
+<Insérer le graphe de la nouvelle histoire>
 
 ## Conclusion
 

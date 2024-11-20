@@ -539,4 +539,4 @@ On obtient une version plus riche et créative du graphe de l'histoire du **Peti
 
 ## Conclusion
 
-
+Pour conclure, il a été important lors de ce projet d'utiliser à bonne escient des IA générative pour les tâches répétitives (génération de texte principalement). Il faut toutefois noter que malgrès une grande quantité de tentative, il est extrêmement difficile de générer une histoire plausible et intéréssante grâce à une IA générative seule. Comme nous avons pu le remarquer dans la partie créative, les transitions entre état sont bancales et manque parfois de sens à la lecture. 

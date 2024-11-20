@@ -410,6 +410,26 @@
 (generate_scenario 's1 'outcome *test-story* *test-state*)
  
 ;; PARTIE CREATIVE
+
+;; Graphe de l'histoire généré uniquement par IA avec ses commentaires
+(defvar *creative-generated-story*
+  '((initialNode s1)           ; Départ dans la forêt
+    (s1 s2 s3 s9)             ; Rencontres dans la forêt : parle au loup (s2), évite le loup (s3), ou trouve un raccourci secret (s9)
+    (s2 s4 s11)               ; Donne la localisation au loup (s4), ou un lapin prévient le chasseur (s11)
+    (s3 s5 s10)               ; Évite le loup : trouve une cabane abandonnée (s5) ou prépare un piège (s10)
+    (s4 s6 s7)                ; Le loup se rend chez la grand-mère (s6), mais peut être suivi par le chasseur (s7)
+    (s5 s6 s7 island)         ; Transitions possibles à partir de la cabane abandonnée
+    (s6 s8 s12)               ; À la maison : déguisement du loup (s8) ou confrontation directe (s12)
+    (s7 s8 s13)               ; Le chasseur attend à la maison (s8), ou suit le loup dans un duel (s13)
+    (s8 outcome)              ; Transition vers une fin heureuse
+    (s9 s10 s11)              ; Raccourci secret : rejoint un allié (s10) ou alerte un chasseur (s11)
+    (s10 s12 s13)             ; Prépare un piège pour le loup ou rejoint la maison à temps
+    (s11 s8 s13)              ; Chasseur agit : sauve grand-mère (s8) ou affronte le loup (s13)
+    (s12 outcome island)      ; Confrontation directe : réussit ou échoue
+    (s13 s8 outcome)          ; Duel avec le loup mène à une fin heureuse ou malheureuse
+    (island)                  ; Fin alternative ou malheureuse
+    (outcome)))               ; Fin heureuse
+
 ;; Graphe de l'histoire optimisé et enrichi
 (defvar *creative-story* '((initialNode s1 s9)
               (s1 s2 s3)

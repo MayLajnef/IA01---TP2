@@ -528,14 +528,186 @@ Lors de l'appel de cette fonction on doit lui passer en paramètre:
 ## Partie créative
 
 Dans cette partie créative, nous avons choisi dans un premier temps d'enrichir quelques peu le graphe de l'histoire et par conséquent les différents dialogue présents dans la fonction rules. Voici donc les prompts utilisés pour enrichir le graphe de l'histoire :
-<prompts>
+
+![Graphe de l'hisoire](https://raw.githubusercontent.com/MayLajnef/IA01---TP2/refs/heads/main/Tests/generatedGraph.png)
+
 On obtient une version plus riche et créative du graphe de l'histoire du **Petit Chaperon Rouge**, intégrant de nombreuses nouvelles scènes et transitions, avec des twists narratifs.
 
+Ce graphe est implémenté en lisp par la variable:
 
+```lisp
+(defvar *creative-generated-story*
+  '((initialNode s1)           ; Départ dans la forêt
+    (s1 s2 s3 s9)             ; Rencontres dans la forêt : parle au loup (s2), évite le loup (s3), ou trouve un raccourci secret (s9)
+    (s2 s4 s11)               ; Donne la localisation au loup (s4), ou un lapin prévient le chasseur (s11)
+    (s3 s5 s10)               ; Évite le loup : trouve une cabane abandonnée (s5) ou prépare un piège (s10)
+    (s4 s6 s7)                ; Le loup se rend chez la grand-mère (s6), mais peut être suivi par le chasseur (s7)
+    (s5 s6 s7 island)         ; Transitions possibles à partir de la cabane abandonnée
+    (s6 s8 s12)               ; À la maison : déguisement du loup (s8) ou confrontation directe (s12)
+    (s7 s8 s13)               ; Le chasseur attend à la maison (s8), ou suit le loup dans un duel (s13)
+    (s8 outcome)              ; Transition vers une fin heureuse
+    (s9 s10 s11)              ; Raccourci secret : rejoint un allié (s10) ou alerte un chasseur (s11)
+    (s10 s12 s13)             ; Prépare un piège pour le loup ou rejoint la maison à temps
+    (s11 s8 s13)              ; Chasseur agit : sauve grand-mère (s8) ou affronte le loup (s13)
+    (s12 outcome island)      ; Confrontation directe : réussit ou échoue
+    (s13 s8 outcome)          ; Duel avec le loup mène à une fin heureuse ou malheureuse
+    (island)                  ; Fin alternative ou malheureuse
+    (outcome)))               ; Fin heureuse
+```
 
+Cependant malgrès de nombreuses tentative de génération, il ne nous a pas été possible de générer une histoire 100% viable en utilisant qu'une IA générative, en l'occurence chat GPT. 
 
+Nous avons donc opté pour une version réalisé manuellement de l'histoire qui se traduit en lisp par les états suivants:
 
-<Insérer le graphe de la nouvelle histoire>
+```lisp
+(defvar *creative-story* '((initialNode s1 s9)
+              (s1 s2 s3)
+              (s2 s5)
+              (s3 s4 s6)
+              (s4 s6 outcome)
+              (s5 s8 s10 island)
+              (s6 s7 s10)
+              (s7 s10 outcome)
+              (s8 s9 s11)
+              (s9 s10 island)
+              (s10 s11 island)
+              (s11 s12 outcome)
+              (s12 outcome)
+              (island)
+              (outcome)
+              ))
+```
+
+Voici le graphe qu'elle représente de manière plus formel:
+
+![Graphe de l'histoire modifié manuellement](https://raw.githubusercontent.com/MayLajnef/IA01---TP2/refs/heads/main/Tests/selfMadeStory.png)
+
+Nous avons donc créé une nouvelle fonction apply-change-scene sur le même principe que la précédente :
+
+```lisp
+(defun creative-apply-change-scene (change state)
+  (cond
+    ((equal change '(initialNode s1))
+      (progn 
+        (rules 'red-riding-hood 'move nil 'wood state)
+        (rules 'red-riding-hood 'greet 'wolf 'wood state)
+      )
+    )
+    ((equal change '(initialNode s9))
+      (progn 
+        (rules 'red-riding-hood 'move nil 'wood state)
+        (rules 'red-riding-hood 'greet 'wolf state)
+        (rules 'wolf 'eat 'red-riding-hood 'wood state)
+      )
+    )
+    ((equal change '(s1 s2))
+      (progn 
+        (rules 'red-riding-hood 'tell 'wolf 'wood state)
+      )
+    )
+    ((equal change '(s1 s3))
+      (progn 
+        (rules 'red-riding-hood 'move nil 'granny-home state)
+        (rules 'red-riding-hood 'greet 'granny 'granny-home state)
+      )
+    )
+    ((equal change '(s2 s5))
+      (progn
+        (rules 'wolf 'move nil 'granny-home state)
+        (rules 'wolf 'tell 'granny 'granny-home state)
+        (rules 'wolf 'eat 'granny 'granny-home state)
+      )
+    )
+    ((equal change '(s3 s4))
+      (progn
+        (rules 'red-riding-hood 'give 'granny 'granny-home state)
+      )
+    )
+    ((equal change '(s3 s6))
+      (progn
+        (rules 'wolf 'move nil 'granny-home state)
+      )
+    )
+    ((equal change '(s4 s6))
+      (progn
+        (rules 'wolf 'move nil 'granny-home state)
+      )
+    )
+    ((equal change '(s5 s8))
+      (progn
+        (rules 'wolf 'tell nil 'granny-home state)
+      )
+    )
+    ((equal change '(s5 s10))
+      (progn
+        (rules 'hunter 'move nil 'granny-home state)
+        (rules 'hunter 'tell 'wolf 'granny-home state)
+        (rules 'hunter 'kill 'wolf 'granny-home state)
+      )
+    )
+    ((equal change '(s6 s10))
+      (progn
+        (rules 'wolf 'eat 'red-riding-hood 'granny-home state)
+        (rules 'wolf 'eat 'granny 'granny-home state)
+      )
+    )
+    ((equal change '(s7 s10))
+      (progn
+        (rules 'wolf 'move nil 'wood state)
+        (rules 'wolf 'eat 'red-riding-hood 'wood state)
+        (rules 'wolf 'eat 'granny 'wood state)
+      )
+    )
+    ((equal change '(s8 s9))
+      (progn
+        (rules 'red-riding-hood 'move nil 'granny-home state)
+        (rules 'wolf 'tell 'red-riding-hood 'granny-home state)
+        (rules 'wolf 'eat 'red-riding-hood 'granny-home state)
+      )
+    )
+    ((equal change '(s8 s11))
+      (progn
+        (rules 'hunter 'move nil 'granny-home state)
+        (rules 'hunter 'tell 'wolf 'granny-home state)
+        (rules 'hunter 'kill 'wolf 'granny-home state)
+      )
+    )
+    ((equal change '(s9 s10))
+      (progn
+        (rules 'wolf 'move nil 'wood state)
+      )
+    )
+    ((equal change '(s10 s11))
+      (progn
+        (rules 'hunter 'move nil 'wood state)
+        (rules 'hunter 'tell 'wolf 'wood state)
+        (rules 'hunter 'kill 'wolf 'wood state)
+      )
+    )
+    ((equal change '(s11 s12))
+      (progn
+        (rules 'red-riding-hood 'give 'granny nil state)
+      )
+    )
+    ((or (equal change '(s4 outcome)) (equal change '(s7 outcome)))
+      (progn
+        (format t "~%FIN HEUREUSE\"")
+      )
+    )
+    ((equal change '(s12 outcome))
+      (progn
+        (rules 'red-riding-hood 'tell 'granny nil state)
+      )
+    )
+    ((or (or (equal change '(s10 island)) (equal change '(s9 island))) (equal change '(s5 island)))
+      (progn 
+        (format t "~%FIN MALHEUREUSE\"")
+      )
+    )
+  )
+)
+```
+
 
 ## Conclusion
 
